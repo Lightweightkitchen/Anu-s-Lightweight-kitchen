@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Anu's Fit Kitchen - Custom Indian high-protein meal prep in Mysore. Clean chicken, egg whites, paneer, oats, brown rice and vegetables delivered daily. Macro-friendly desi gym diet plans.">
+    <meta name="keywords" content="meal prep Mysore, high protein meals, Indian gym diet, fitness meals, macro meals, clean eating Mysore">
+    <title>Anu's Fit Kitchen - Custom Indian High-Protein Meal Prep in Mysore</title>
+    
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        quicksand: ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fcfdfa',
+                            100: '#f0f4eb',
+                            200: '#dce5d0',
+                            500: '#16a34a',
+                            600: '#15803d',
+                            700: '#166534',
+                            800: '#14532d',
+                            900: '#0f2f1d',
+                        }
+                    },
+                    animation: {
+                        fadeIn: 'fadeIn 0.3s ease-in-out',
+                        slideIn: 'slideIn 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fcfdfa;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .dumbbell-pattern {
+            background-image: radial-gradient(#15803d 1px, transparent 0);
+            background-size: 24px 24px;
+            opacity: 0.03;
+        }
+        .menu-slider::-webkit-scrollbar {
+            height: 6px;
+        }
+        .menu-slider::-webkit-scrollbar-track {
+            background: #f0f4eb;
+            border-radius: 10px;
+        }
+        .menu-slider::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 10px;
+        }
+        .menu-slider::-webkit-scrollbar-thumb:hover {
+            background: #166534;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #16a34a;
+            cursor: pointer;
+            border: 3px solid #fcfdfa;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #16a34a;
+            cursor: pointer;
+            border: 3px solid #fcfdfa;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15);
+        }
+        /* FIX: Unified diet toggle button styles managed entirely via JS — no conflicting CSS classes */
+        .diet-btn {
+            cursor: pointer;
+            select: none;
+            border-radius: 1rem;
+            border-width: 2px;
+            border-style: solid;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            transition: all 0.2s ease;
+        }
+        .diet-btn-active {
+            background-color: #15803d;
+            border-color: #15803d;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .diet-btn-inactive {
+            background-color: #f0f4eb;
+            border-color: #dce5d0;
+            color: #6b7280;
+            transform: scale(1);
+            opacity: 0.7;
+        }
+        .meal-card {
+            transition: all 0.3s ease;
+        }
+        .meal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        /* FIX: Goal button active/inactive states */
+        .goal-btn-active {
+            background-color: #f0f4eb !important;
+            border-color: #15803d !important;
+            color: #0f2f1d !important;
+            font-weight: 700;
+        }
+        .goal-btn-inactive {
+            background-color: #e7e5e4 !important;
+            border-color: #e7e5e4 !important;
+            color: #6b7280 !important;
+        }
+    </style>
+</head>
+<body class="text-brand-900 antialiased min-h-screen relative overflow-x-hidden">
+    
+    <!-- Background Gym Pattern -->
+    <div class="absolute inset-0 dumbbell-pattern pointer-events-none z-0"></div>
+
+    <!-- Top Promo Banner -->
+    <div class="bg-brand-900 text-brand-100 text-center py-2.5 px-4 text-xs sm:text-sm font-semibold relative z-20 flex items-center justify-center gap-2">
+        <span class="animate-pulse">🔥</span>
+        <span><strong>Balanced Fitness Meal prep:</strong> High-Protein, Low-Fat Indian meals hand-delivered daily across Mysore.</span>
+    </div>
+
+    <!-- Sticky Navigation Header -->
+    <header class="sticky top-0 z-50 bg-brand-50/90 backdrop-blur-md border-b border-brand-200/60 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group" aria-label="Anu's Fit Kitchen Home">
+                <div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-brand-500 shadow-md">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand-800 to-brand-900 flex flex-col items-center justify-center p-1 text-center">
+                        <i class="fa-solid fa-dumbbell text-brand-200 text-sm"></i>
+                        <span class="text-[8px] font-bold text-brand-100 leading-none font-fredoka">Anu's</span>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-2xl font-bold text-brand-900 leading-none tracking-tight font-fredoka">Anu's Fit Kitchen</h1>
+                    <span class="text-[9px] sm:text-xs text-brand-600 font-semibold tracking-widest block uppercase font-quicksand">presented by Anu's chicken shop ♥</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center gap-6 xl:gap-8 font-bold text-brand-800 text-sm xl:text-base" aria-label="Main navigation">
+                <a href="#menu-explore" class="hover:text-brand-600 transition-colors">Our Menu</a>
+                <a href="#estimator" class="hover:text-brand-600 transition-colors">Macro Calculator</a>
+                <a href="#benefits" class="hover:text-brand-600 transition-colors">Our Standard</a>
+                <a href="#comparison" class="hover:text-brand-600 transition-colors">See the Difference</a>
+                <a href="#plans" class="hover:text-brand-600 transition-colors">Meal Prep Plans</a>
+                <a href="#delivery-checker" class="hover:text-brand-600 transition-colors">Delivery Grid</a>
+                <a href="#faq" class="hover:text-brand-600 transition-colors">FAQs</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <a href="#plans" 
+                   class="hidden sm:inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-full shadow-md transition-all transform hover:-translate-y-0.5 text-sm font-fredoka"
+                   aria-label="Inquire about meal plans">
+                    <i class="fa-solid fa-calendar-check text-base"></i>
+                    <span>Inquire About Plans</span>
+                </a>
+                
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-brand-800 hover:bg-brand-100 focus:outline-none focus:ring-2 focus:ring-brand-500" aria-label="Toggle mobile menu" aria-expanded="false">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-brand-100 border-b border-brand-200 animate-fadeIn font-semibold" role="dialog" aria-label="Mobile navigation">
+            <div class="px-4 pt-2 pb-5 space-y-2">
+                <a href="#menu-explore" onclick="closeMobileMenu()" class="block py-2.5 px-3 rounded-lg hover:bg-brand-200 text-brand-900 font-fredoka font-medium">Our Menu</a>
+                <a href="#estimator" onclick="closeMobileMenu()" class="block py-2.5 px-3 rounded-lg hover:bg-brand-200 text-brand-900">Macro Calculator</a>
+                <a href="#benefits" onclick="closeMobileMenu()" class="block py-2.5 px-3 rounded-lg hover:bg-brand-200 text-brand-900">Our Standard</a>
+                <a href="#comparison" onclick="closeMobileMenu()" class="block py-2.5 px-3 rounded-lg hover:bg-brand-200 text-brand-900">See the Difference</a>
+                <a href="#plans" onclick="closeMobileMenu()" class="block py-2.5 px-3 rounded-lg hover:bg-brand-200 text-brand-900 font-fredoka font-medium font-bold">Meal Prep Plans</a>
+                <a href="#delivery-checker" onclick="closeMobileMenu()" class="block py-2.5 px-3 rounded-lg hover:bg-brand-200 text-brand-900 font-medium">Delivery Grid</a>
+                <a href="#faq" onclick="closeMobileMenu()" class="block py-2.5 px-3 rounded-lg hover:bg-brand-200 text-brand-900 font-fredoka font-medium">FAQs</a>
+                <a href="#plans" onclick="closeMobileMenu()" 
+                   class="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-full shadow-lg mt-4 font-fredoka">
+                    <i class="fa-solid fa-calendar-check text-lg"></i>
+                    <span>Inquire About Plans</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative py-12 md:py-20 lg:py-24 overflow-hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-12 gap-12 items-center relative z-10">
+            <div class="md:col-span-7 space-y-6 text-center md:text-left">
+                <div class="inline-flex items-center gap-2 bg-brand-100 text-brand-800 border border-brand-200 font-extrabold px-4 py-2 rounded-full text-xs sm:text-sm uppercase tracking-wide font-fredoka">
+                    🇮🇳 Premium Desi Gym Diet Plans
+                </div>
+                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-black text-brand-900 leading-tight font-fredoka">
+                    Indian Macros. <br>Desi Taste. <span class="text-brand-500 underline decoration-wavy decoration-brand-200/80">Delivered.</span>
+                </h2>
+                <p class="text-lg sm:text-xl text-stone-600 max-w-xl mx-auto md:mx-0 leading-relaxed font-quicksand">
+                    Mysore's ultimate macro-friendly Indian fitness meal prep. Customize your diet profile and we'll create your perfect weekly menu. Healthy eating made completely natural.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
+                    <a href="#menu-explore" 
+                       class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-lg py-4 px-8 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 font-fredoka"
+                       aria-label="Explore our menu">
+                        <i class="fa-solid fa-utensils"></i>
+                        <span>Select Diet Profile & See Menu</span>
+                    </a>
+                </div>
+
+                <div class="pt-6 border-t border-brand-200/50 flex flex-wrap justify-center md:justify-start gap-y-3 gap-x-6 text-brand-800 text-sm font-bold font-quicksand">
+                    <span><i class="fa-solid fa-drumstick-bite text-brand-500 mr-2"></i>Non-Vegetarian</span>
+                    <span><i class="fa-solid fa-egg text-brand-500 mr-2"></i>Eggitarian</span>
+                    <span><i class="fa-solid fa-seedling text-brand-500 mr-2"></i>Vegetarian</span>
+                </div>
+            </div>
+
+            <div class="md:col-span-5 relative flex justify-center">
+                <div class="relative w-80 h-80 sm:w-96 sm:h-96">
+                    <div class="absolute inset-0 bg-brand-200 rounded-3xl mix-blend-multiply filter blur-xl opacity-60 animate-pulse"></div>
+                    <div class="relative w-full h-full bg-white rounded-3xl border-4 border-brand-200 shadow-2xl overflow-hidden p-3 flex flex-col justify-between">
+                        <div class="overflow-hidden rounded-2xl h-full relative bg-stone-100 flex items-center justify-center">
+                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800" 
+                                 alt="Clean Indian meal prep with chicken, vegetables and brown rice" 
+                                 class="w-full h-full object-cover transform scale-100 hover:scale-105 transition duration-500"
+                                 loading="lazy">
+                            <span class="absolute top-3 left-3 text-[10px] font-bold text-white uppercase tracking-widest bg-emerald-600/95 px-3 py-1 rounded-full shadow-sm font-quicksand">
+                                🇮🇳 Traditional Taste • Modern Macros
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DYNAMIC DIET TOGGLE SELECTION & WEEKLY MENU SHOWCASE -->
+    <section class="py-16 bg-white border-y border-brand-200/50 scroll-mt-20 font-quicksand" id="menu-explore">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <span class="text-brand-600 font-extrabold text-sm uppercase tracking-widest block mb-1 font-fredoka">Desi Gym Recipes</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-brand-900 font-fredoka">Your Weekly Meal Plan</h2>
+                <p class="text-stone-650 mt-2 text-sm font-quicksand font-medium">Select your diet profile below and watch your weekly menu transform automatically.</p>
+            </div>
+
+            <!-- FIX: Diet toggle buttons — IDs use safe keys matching JS lookups -->
+            <div class="flex flex-col items-center mb-10 px-2 font-quicksand">
+                <div class="bg-brand-50 p-6 rounded-3xl border-2 border-brand-200 max-w-xl w-full shadow-sm space-y-4">
+                    <span class="text-xs font-black text-stone-500 uppercase tracking-widest block text-center">Select Your Diet Profile</span>
+                    
+                    <div class="grid grid-cols-3 gap-4 font-fredoka">
+                        <!-- FIX: IDs use simple safe keys: diet-btn-nonveg, diet-btn-eggitarian, diet-btn-vegetarian -->
+                        <div onclick="setDietProfile('nonveg')" id="diet-btn-nonveg" 
+                             class="diet-btn diet-btn-active"
+                             role="button" aria-pressed="true" tabindex="0"
+                             onkeydown="if(event.key==='Enter'||event.key===' ')setDietProfile('nonveg')">
+                            <span class="text-2xl sm:text-3xl">🍗</span>
+                            <span class="text-[10px] sm:text-xs font-black uppercase tracking-wider text-center">Non-Vegetarian</span>
+                            <span id="diet-label-nonveg" class="text-[9px] font-bold opacity-90">ACTIVE</span>
+                        </div>
+
+                        <div onclick="setDietProfile('eggitarian')" id="diet-btn-eggitarian" 
+                             class="diet-btn diet-btn-inactive"
+                             role="button" aria-pressed="false" tabindex="0"
+                             onkeydown="if(event.key==='Enter'||event.key===' ')setDietProfile('eggitarian')">
+                            <span class="text-2xl sm:text-3xl">🥚</span>
+                            <span class="text-[10px] sm:text-xs font-black uppercase tracking-wider text-center">Eggitarian</span>
+                            <span id="diet-label-eggitarian" class="text-[9px] font-bold opacity-90">INACTIVE</span>
+                        </div>
+
+                        <div onclick="setDietProfile('vegetarian')" id="diet-btn-vegetarian" 
+                             class="diet-btn diet-btn-inactive"
+                             role="button" aria-pressed="false" tabindex="0"
+                             onkeydown="if(event.key==='Enter'||event.key===' ')setDietProfile('vegetarian')">
+                            <span class="text-2xl sm:text-3xl">🥦</span>
+                            <span class="text-[10px] sm:text-xs font-black uppercase tracking-wider text-center">Vegetarian</span>
+                            <span id="diet-label-vegetarian" class="text-[9px] font-bold opacity-90">INACTIVE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center pt-2">
+                        <span id="active-profile-summary" class="text-xs font-bold text-brand-700 bg-brand-100/80 px-4 py-1.5 rounded-full inline-block font-quicksand">
+                            Current Diet Profile: Non-Vegetarian (Chicken + Eggs + Veg included)
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Weekly Menu -->
+            <div id="weekly-menu-container" class="bg-brand-50 rounded-2xl p-6 border border-brand-200 mb-6" role="region" aria-label="Weekly meal plan">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-brand-900 font-fredoka">Weekly Overview</h3>
+                        <div class="bg-white rounded-xl p-4 border border-brand-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="text-sm font-bold text-stone-500">1 Week</span>
+                                <span class="text-xs font-bold text-emerald-600">Complete Plan</span>
+                            </div>
+                            <div class="text-sm text-stone-600">Daily fresh meal prep with small portions of brown rice, oats, or sweet potatoes as carbs.</div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="weekly-menu-cards">
+                            <!-- Menu overview cards loaded by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed meal cards -->
+            <div id="dynamic-menu-container" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2" role="region" aria-label="Daily meal details">
+                <!-- Loaded dynamically by JS -->
+            </div>
+
+            <!-- Clean Diet Standard Badge -->
+            <div class="mt-8 bg-brand-900 text-brand-50 rounded-2xl py-4 px-6 flex flex-wrap justify-center items-center gap-y-2 gap-x-6 text-xs sm:text-sm font-bold uppercase tracking-wider border border-brand-700 font-fredoka">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-ban text-red-500 text-xs"></i> No Refined Seed Oils</span>
+                <span class="text-brand-700 hidden sm:inline">•</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-ban text-red-500 text-xs"></i> No Artificial Colors / MSG</span>
+                <span class="text-brand-700 hidden sm:inline">•</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-ban text-red-500 text-xs"></i> Low Sodium / Balanced Sea Salt</span>
+                <span class="text-brand-700 hidden sm:inline">•</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-seedling text-emerald-400 text-xs"></i> Sautéed in Cold-Pressed Coconut Oil</span>
+                <span class="text-brand-700 hidden sm:inline">•</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-bowl-rice text-emerald-400 text-xs"></i> Small Portions of Brown Rice/Oats</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CALORIE & PROTEIN ESTIMATOR -->
+    <section class="py-16 bg-brand-50/50 scroll-mt-20 border-b border-brand-200/50" id="estimator">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-10 font-fredoka">
+                <span class="text-brand-600 font-extrabold text-sm uppercase tracking-widest block">Interactive Calculator</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-brand-900 mt-2">Find Your Target Macros</h2>
+                <p class="text-stone-600 mt-2 font-quicksand font-semibold">Select your workout objective and input your current weight. We'll instantly calculate your suggested daily meal portion &amp; macros!</p>
+            </div>
+
+            <div class="bg-white rounded-3xl border-2 border-brand-200 p-6 sm:p-8 shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center font-quicksand">
+                    
+                    <div class="md:col-span-7 space-y-6">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-bold text-stone-700 uppercase">My Body Weight:</span>
+                                <span class="text-xl font-black text-brand-800" id="weight-display">70 kg</span>
+                            </div>
+                            <input type="range" id="weight-slider" min="40" max="110" value="70" 
+                                   class="w-full h-2.5 bg-brand-100 rounded-lg appearance-none cursor-pointer accent-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                   aria-label="Body weight slider">
+                            <div class="flex justify-between text-[10px] text-stone-400 font-bold mt-1">
+                                <span>Flyweight (40kg)</span>
+                                <span>Standard (75kg)</span>
+                                <span>Heavyweight (110kg+)</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-sm font-bold text-stone-700 uppercase block mb-2">My Fitness Goal:</span>
+                            <!-- FIX: Goal buttons use data-goal attribute; styling managed purely by JS -->
+                            <div class="grid grid-cols-3 gap-2.5 font-fredoka">
+                                <button onclick="setFitnessGoal('Cut')" id="goal-cut" 
+                                        class="py-2.5 px-2 rounded-xl border-2 font-bold text-xs goal-btn-active focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all" 
+                                        aria-pressed="true">
+                                    ✂️ Desi Shred
+                                </button>
+                                <button onclick="setFitnessGoal('Maintain')" id="goal-maintain" 
+                                        class="py-2.5 px-2 rounded-xl border-2 font-semibold text-xs goal-btn-inactive hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all" 
+                                        aria-pressed="false">
+                                    ⚖️ Maintenance
+                                </button>
+                                <button onclick="setFitnessGoal('Bulk')" id="goal-bulk" 
+                                        class="py-2.5 px-2 rounded-xl border-2 font-semibold text-xs goal-btn-inactive hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all" 
+                                        aria-pressed="false">
+                                    💪 Clean Bulk
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-5 bg-brand-50 rounded-2xl p-5 border border-brand-200 flex flex-col justify-between text-center min-h-[240px]">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-stone-500 tracking-widest">Suggested Clean Fuel Targets</span>
+                            <div class="text-3xl font-black text-brand-900 my-1 font-fredoka" id="macro-calories">~ 1,330 Kcal</div>
+                            <div class="text-lg font-bold text-emerald-700" id="macro-protein">🥩 ~ 126g Protein / day</div>
+                        </div>
+
+                        <div class="border-t border-brand-200/60 my-3.5 pt-3.5">
+                            <span class="text-[10px] uppercase font-bold text-stone-500 tracking-wider font-semibold">Recommended Prep Plan</span>
+                            <span class="text-sm font-bold text-brand-700 block mt-1" id="recommended-plan-name">2 Meals A Day (Best for fat loss)</span>
+                        </div>
+
+                        <button onclick="triggerMacroPlanInquiry()" 
+                                class="w-full bg-brand-800 hover:bg-brand-900 text-white font-bold py-3 px-4 rounded-xl text-xs transition-transform transform active:scale-95 shadow font-fredoka focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                aria-label="Request custom plan">
+                            Request This Custom Plan
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Athletes Trust Us -->
+    <section class="py-16 bg-white border-b border-brand-200/50 font-quicksand" id="benefits">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-10 font-fredoka">
+                <span class="text-brand-600 font-extrabold text-xs uppercase tracking-widest block">Clean Sourcing Standard</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-brand-900 mt-1">Why Mysore Athletes Choose Us</h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-brand-50 p-5 rounded-2xl border border-brand-200/60 flex items-start gap-4 shadow-sm hover:scale-105 transition duration-300">
+                    <div class="text-3xl shrink-0 bg-brand-100 p-2.5 rounded-xl">🐔</div>
+                    <div>
+                        <h3 class="text-base font-bold text-brand-950 font-fredoka">Anu's Chicken Shop Sourcing</h3>
+                        <p class="text-stone-600 text-xs mt-1 leading-relaxed font-semibold">Direct morning deliveries of clean chicken breast cuts from our parent shop. Absolute freshness guaranteed.</p>
+                    </div>
+                </div>
+
+                <div class="bg-brand-50 p-5 rounded-2xl border border-brand-200/60 flex items-start gap-4 shadow-sm hover:scale-105 transition duration-300">
+                    <div class="text-3xl shrink-0 bg-amber-100 p-2.5 rounded-xl">⚖️</div>
+                    <div>
+                        <h3 class="text-base font-bold text-brand-950 font-fredoka">Weighed Raw Macros</h3>
+                        <p class="text-stone-600 text-xs mt-1 leading-relaxed font-semibold">We weigh every single paneer slice, chicken tender, and egg white strictly pre-cooked so your macros are 100% accurate.</p>
+                    </div>
+                </div>
+
+                <div class="bg-brand-50 p-5 rounded-2xl border border-brand-200/60 flex items-start gap-4 shadow-sm hover:scale-105 transition duration-300">
+                    <div class="text-3xl shrink-0 bg-emerald-100 p-2.5 rounded-xl">🌱</div>
+                    <div>
+                        <h3 class="text-base font-bold text-brand-950 font-fredoka">Strictly Segregated Cook-Lines</h3>
+                        <p class="text-stone-600 text-xs mt-1 leading-relaxed font-semibold">Separate tawas, knives, and kitchen sections are reserved for pure vegetarian and egg-vegetarian prep.</p>
+                    </div>
+                </div>
+
+                <div class="bg-brand-50 p-5 rounded-2xl border border-brand-200/60 flex items-start gap-4 shadow-sm hover:scale-105 transition duration-300">
+                    <div class="text-3xl shrink-0 bg-orange-100 p-2.5 rounded-xl">⚡</div>
+                    <div>
+                        <h3 class="text-base font-bold text-brand-950 font-fredoka">Clean Complex Carbs</h3>
+                        <p class="text-stone-600 text-xs mt-1 leading-relaxed font-semibold">Replaced high-glycemic white rice with small portions of dietary brown rice, oats, and sweet potatoes to avoid sluggish insulin spikes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compare Diets Section -->
+    <section class="py-16 bg-brand-50/50 scroll-mt-20 font-quicksand" id="comparison">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-10 font-fredoka">
+                <span class="text-brand-600 font-extrabold text-xs uppercase tracking-widest block">Compare Diets</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-brand-900 mt-1">Gym Food Doesn't Need to Be Tasteless</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-4 border-b border-stone-100 pb-4 mb-4">
+                            <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-stone-200 bg-stone-100 flex items-center justify-center text-2xl">🍳</div>
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-red-600 bg-red-50 px-2 py-0.5 rounded flex items-center gap-1 font-fredoka">
+                                    <i class="fa-solid fa-circle-xmark"></i> Dry DIY Prep
+                                </span>
+                                <h3 class="text-base font-bold text-stone-800 font-fredoka">Typical Homemade Prep</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-3.5 text-xs text-stone-600">
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 shrink-0 mt-0.5"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                                <span><strong>Extremely Dry Taste:</strong> Boiling chicken breast or plain paneer with zero culinary care makes it dry, rubbery, and incredibly boring.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 shrink-0 mt-0.5"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                                <span><strong>Hours of Daily Labor:</strong> Sourcing fresh protein, washing, chopping veggies, weighing macros, and scrubbing greasy pans takes 2+ hours daily.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 shrink-0 mt-0.5"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                                <span><strong>Inconsistent Macros:</strong> Guesswork with portion weights and skipping vegetable variety leads to micro-nutrient deficiencies.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border-2 border-brand-500/80 p-6 shadow-md flex flex-col justify-between relative overflow-hidden">
+                    <span class="absolute top-0 right-0 bg-brand-500 text-white text-[9px] font-bold uppercase tracking-wider py-0.5 px-3.5 rounded-bl-xl font-fredoka">Fit Choice</span>
+                    <div>
+                        <div class="flex items-center gap-4 border-b border-brand-100 pb-4 mb-4">
+                            <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-brand-200 bg-brand-50 flex items-center justify-center text-2xl">🥦</div>
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1 font-fredoka">
+                                    <i class="fa-solid fa-circle-check"></i> Anu's Fit Sourcing
+                                </span>
+                                <h3 class="text-base font-bold text-brand-900 font-fredoka">Anu's Fit Kitchen</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-3.5 text-xs text-stone-700">
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-600 shrink-0 mt-0.5"><i class="fa-solid fa-heart"></i></span>
+                                <span><strong>Desi Spiced &amp; Juicy:</strong> Gently grilled and finished with high-quality Indian herbs, zero-calorie spices, and fresh vegetables plus small portions of brown rice/oats.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-600 shrink-0 mt-0.5"><i class="fa-solid fa-heart"></i></span>
+                                <span><strong>100% Free Time:</strong> Arrives fresh, warm, and ready to consume right at your post-workout window.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-emerald-600 shrink-0 mt-0.5"><i class="fa-solid fa-heart"></i></span>
+                                <span><strong>Precisely Weighed:</strong> Perfect portions of bio-available proteins, slow-burn complex carbs (brown rice/oats/sweet potato), and high-quality fibers.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscription Plans Section -->
+    <section class="py-16 bg-white scroll-mt-20 font-quicksand" id="plans">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-12 font-fredoka">
+                <span class="text-brand-600 font-extrabold text-sm uppercase tracking-widest block">Our Offers</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-brand-900">Monthly Athletic Prep Subscriptions</h2>
+                <p class="text-stone-600 mt-3 font-quicksand font-semibold text-base">Fresh daily delivery to your home, office, or gym across Mysore. No locks, pause anytime!</p>
+            </div>
+
+            <div class="flex overflow-x-auto gap-6 pb-6 pt-2 menu-slider snap-x snap-mandatory px-2 mb-12 md:justify-center font-semibold font-quicksand">
+                
+                <!-- Plan 1 -->
+                <div class="min-w-[290px] sm:min-w-[320px] lg:min-w-[340px] lg:max-w-[360px] bg-brand-50 rounded-3xl p-8 border-2 border-brand-200 shadow-md hover:shadow-xl transition-all flex flex-col justify-between snap-start">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-2xl">🍱</span>
+                            <h3 class="text-xl font-bold text-brand-900 font-fredoka">1 Meal A Day</h3>
+                        </div>
+                        <p class="text-stone-500 text-sm font-normal">Perfect as your daily high-protein post-workout fuel. Let us handle your most critical muscle-recovery meal!</p>
+                        
+                        <div class="my-6 border-y border-brand-200/50 py-4 flex flex-col">
+                            <div>
+                                <span class="text-sm font-semibold text-red-600 line-through mr-2">₹5,599</span>
+                                <span class="text-3xl font-extrabold text-brand-900">₹4,499</span>
+                                <span class="text-stone-500 text-sm"> / month</span>
+                            </div>
+                            <span class="text-emerald-700 text-xs font-extrabold mt-1.5 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check"></i> <span>Only ~₹150 per meal</span>
+                            </span>
+                        </div>
+
+                        <ul class="space-y-3 text-stone-700 mb-8 text-sm font-normal">
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-check text-brand-500 font-bold"></i>
+                                <span>1 Warm fitness prep delivery daily (30/mo)</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-check text-brand-500 font-bold"></i>
+                                <span>Precision macro card included</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-check text-brand-500 font-bold"></i>
+                                <span>Microwave safe food grade packaging</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <button onclick="openPlanModal('1 Meal A Day')" 
+                            class="w-full inline-flex items-center justify-center gap-2 bg-brand-800 hover:bg-brand-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all transform active:scale-95 text-sm font-fredoka focus:outline-none focus:ring-2 focus:ring-brand-500"
+                            aria-label="Inquire about 1 Meal A Day plan">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>Inquire Plan on WhatsApp</span>
+                    </button>
+                </div>
+
+                <!-- Plan 2 (Featured) -->
+                <div class="min-w-[290px] sm:min-w-[320px] lg:min-w-[340px] lg:max-w-[360px] bg-gradient-to-b from-brand-100 to-white rounded-3xl p-8 border-4 border-brand-600 shadow-xl flex flex-col justify-between relative snap-start">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-600 text-white text-xs font-bold uppercase py-1 px-4 rounded-full shadow-md tracking-wider font-fredoka whitespace-nowrap">
+                        ✨ Trainer Recommended Choice
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2 font-fredoka">
+                                <span class="text-2xl">🍱🍱</span>
+                                <h3 class="text-xl font-bold text-brand-900">2 Meals A Day</h3>
+                            </div>
+                            <span class="bg-brand-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase font-fredoka">Top Shred</span>
+                        </div>
+                        <p class="text-stone-600 text-sm font-normal">Ideal for athletes and lifters. Replaces both lunch &amp; dinner to keep you in complete metabolic fat-burning control.</p>
+                        
+                        <div class="my-6 border-y border-brand-200 py-4 flex flex-col font-quicksand">
+                            <div>
+                                <span class="text-sm font-semibold text-red-600 line-through mr-2">₹9,599</span>
+                                <span class="text-3xl font-extrabold text-brand-900">₹7,999</span>
+                                <span class="text-stone-500 text-sm"> / month</span>
+                            </div>
+                            <span class="text-emerald-700 text-xs font-extrabold mt-1.5 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check animate-pulse"></i> <span>Only ~₹133 per meal</span>
+                            </span>
+                        </div>
+
+                        <ul class="space-y-3 text-stone-700 mb-8 text-sm font-normal">
+                            <li class="flex items-center gap-2.5 font-semibold">
+                                <i class="fa-solid fa-check text-brand-600 font-bold"></i>
+                                <span>2 Fresh meal prep daily deliveries (60/mo)</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-check text-brand-600 font-bold"></i>
+                                <span>Perfect balance for Shred / Lean Bulk</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-check text-brand-600 font-bold"></i>
+                                <span>Diet adjustments (Non-Veg / Eggitarian / Vegetarian)</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <button onclick="openPlanModal('2 Meals A Day')" 
+                            class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg transition-all transform active:scale-95 text-sm font-fredoka focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            aria-label="Inquire about 2 Meals A Day plan">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>Inquire Plan on WhatsApp</span>
+                    </button>
+                </div>
+
+                <!-- Plan 3 -->
+                <div class="min-w-[290px] sm:min-w-[320px] lg:min-w-[340px] lg:max-w-[360px] bg-brand-50 rounded-3xl p-8 border-2 border-brand-200 shadow-md hover:shadow-xl transition-all flex flex-col justify-between snap-start font-quicksand">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2 font-fredoka">
+                            <span class="text-2xl">🍱🍱🍱</span>
+                            <h3 class="text-xl font-bold text-brand-900">3 Meals A Day</h3>
+                        </div>
+                        <p class="text-stone-500 text-sm font-normal">Maximum convenience for serious athletes. Replaces breakfast, lunch &amp; dinner for complete diet control.</p>
+                        
+                        <div class="my-6 border-y border-brand-200/50 py-4 flex flex-col">
+                            <div>
+                                <span class="text-sm font-semibold text-red-600 line-through mr-2">₹13,999</span>
+                                <span class="text-3xl font-extrabold text-brand-900">₹11,999</span>
+                                <span class="text-stone-500 text-sm"> / month</span>
+                            </div>
+                            <span class="text-emerald-700 text-xs font-extrabold mt-1.5 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check"></i> <span>Only ~₹133 per meal</span>
+                            </span>
+                        </div>
+
+                        <ul class="space-y-3 text-stone-700 mb-8 text-sm font-normal">
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-check text-brand-500 font-bold"></i>
+                                <span>3 Fresh meal prep daily deliveries (90/mo)</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-check text-brand-500 font-bold"></i>
+                                <span>Complete diet management</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-check text-brand-500 font-bold"></i>
+                                <span>Priority delivery slot</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-check text-brand-500 font-bold"></i>
+                                <span>Free nutrition consultation</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <button onclick="openPlanModal('3 Meals A Day')" 
+                            class="w-full inline-flex items-center justify-center gap-2 bg-brand-800 hover:bg-brand-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all transform active:scale-95 text-sm font-fredoka focus:outline-none focus:ring-2 focus:ring-brand-500"
+                            aria-label="Inquire about 3 Meals A Day plan">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>Inquire Plan on WhatsApp</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="#delivery-checker" class="inline-flex items-center gap-2 text-brand-600 hover:text-brand-800 font-bold text-sm transition-colors">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <span>Check if we deliver to your area →</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Delivery Checker Section -->
+    <section class="py-16 bg-brand-50/50 scroll-mt-20" id="delivery-checker">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10 font-fredoka">
+                <span class="text-brand-600 font-extrabold text-sm uppercase tracking-widest block">Delivery Area</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-brand-900 mt-2">Check Our Delivery Grid</h2>
+                <p class="text-stone-600 mt-2 font-quicksand font-semibold">We deliver fresh meals daily across most of Mysore. Enter your area to check availability!</p>
+            </div>
+
+            <div class="bg-white rounded-3xl border-2 border-brand-200 p-6 sm:p-8 shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="area-input" class="block text-sm font-bold text-stone-700 mb-2">Enter Your Area/Locality:</label>
+                        <div class="flex gap-2">
+                            <!-- FIX: Added id="area-input" and also a reference variable in JS -->
+                            <input type="text" id="area-input" placeholder="e.g., Karnataka, VV Mohalla, Devaraja" 
+                                   class="flex-1 px-4 py-3 rounded-xl border-2 border-brand-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none font-quicksand"
+                                   aria-label="Area input"
+                                   onkeydown="if(event.key==='Enter')checkDelivery()">
+                            <button onclick="checkDelivery()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-6 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                    aria-label="Check delivery availability">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+                        <div id="delivery-result" class="mt-4 p-4 rounded-xl hidden" role="status"></div>
+                    </div>
+                    
+                    <div class="bg-brand-50 rounded-2xl p-5 border border-brand-200">
+                        <h3 class="font-bold text-brand-900 mb-3 font-fredoka">📍 Popular Delivery Areas:</h3>
+                        <ul class="space-y-2 text-sm text-stone-700 font-quicksand">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> VV Mohalla</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Devaraja Market</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Karnataka</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Gokulam</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Saraswathipura</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Jaganmohan Palace</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-white scroll-mt-20 font-quicksand" id="faq">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 font-fredoka">
+                <span class="text-brand-600 font-extrabold text-sm uppercase tracking-widest block">FAQs</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-brand-900 mt-2">Frequently Asked Questions</h2>
+            </div>
+
+            <div class="space-y-4">
+                <details class="bg-brand-50 rounded-2xl border border-brand-200 p-5 cursor-pointer group">
+                    <summary class="flex justify-between items-center font-bold text-brand-900 font-fredoka list-none">
+                        <span>How do I customize my diet profile?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="mt-3 text-stone-700 text-sm">Select your preferred diet profile (Non-Vegetarian, Eggitarian, or Vegetarian) using the toggle buttons. Your weekly menu will automatically update to show only meals that match your diet profile!</p>
+                </details>
+
+                <details class="bg-brand-50 rounded-2xl border border-brand-200 p-5 cursor-pointer group">
+                    <summary class="flex justify-between items-center font-bold text-brand-900 font-fredoka list-none">
+                        <span>What does Non-Vegetarian profile include?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="mt-3 text-stone-700 text-sm">Our Non-Vegetarian profile includes a mix of chicken, egg, and vegetarian meals throughout the week, with small portions of brown rice, oats, or sweet potatoes as carbs.</p>
+                </details>
+
+                <details class="bg-brand-50 rounded-2xl border border-brand-200 p-5 cursor-pointer group">
+                    <summary class="flex justify-between items-center font-bold text-brand-900 font-fredoka list-none">
+                        <span>What does Eggitarian profile include?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="mt-3 text-stone-700 text-sm">Our Eggitarian profile includes egg-based and vegetarian meals, with small portions of brown rice, oats, or sweet potatoes as carbs. No chicken is included.</p>
+                </details>
+
+                <details class="bg-brand-50 rounded-2xl border border-brand-200 p-5 cursor-pointer group">
+                    <summary class="flex justify-between items-center font-bold text-brand-900 font-fredoka list-none">
+                        <span>What does Vegetarian profile include?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="mt-3 text-stone-700 text-sm">Our Vegetarian profile includes only vegetarian meals, with small portions of brown rice, oats, or sweet potatoes as carbs. No chicken or eggs are included.</p>
+                </details>
+
+                <details class="bg-brand-50 rounded-2xl border border-brand-200 p-5 cursor-pointer group">
+                    <summary class="flex justify-between items-center font-bold text-brand-900 font-fredoka list-none">
+                        <span>What time do you deliver?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="mt-3 text-stone-700 text-sm">We deliver twice daily: morning deliveries (7-9 AM) for breakfast/lunch plans and evening deliveries (5-7 PM) for dinner plans. You can select your preferred time slot when subscribing.</p>
+                </details>
+
+                <details class="bg-brand-50 rounded-2xl border border-brand-200 p-5 cursor-pointer group">
+                    <summary class="flex justify-between items-center font-bold text-brand-900 font-fredoka list-none">
+                        <span>Are the meals really macro-accurate?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="mt-3 text-stone-700 text-sm">Yes! We weigh every ingredient raw before cooking. Each meal comes with a macro card showing exact calories, protein, carbs, and fats. No guesswork needed!</p>
+                </details>
+
+                <details class="bg-brand-50 rounded-2xl border border-brand-200 p-5 cursor-pointer group">
+                    <summary class="flex justify-between items-center font-bold text-brand-900 font-fredoka list-none">
+                        <span>Can I pause or cancel my subscription?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="mt-3 text-stone-700 text-sm">Absolutely! There are no locks or contracts. You can pause your subscription for up to 7 days or cancel anytime through WhatsApp. No questions asked.</p>
+                </details>
+
+                <details class="bg-brand-50 rounded-2xl border border-brand-200 p-5 cursor-pointer group">
+                    <summary class="flex justify-between items-center font-bold text-brand-900 font-fredoka list-none">
+                        <span>Is the chicken really from Anu's Chicken Shop?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="mt-3 text-stone-700 text-sm">Yes! We source fresh chicken breast cuts directly from our parent Anu's Chicken Shop every morning. This guarantees absolute freshness and quality that you won't find in regular meal prep services.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-900 text-brand-100 py-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-brand-500 bg-gradient-to-br from-brand-800 to-brand-900 flex items-center justify-center">
+                            <i class="fa-solid fa-dumbbell text-brand-200"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-fredoka">Anu's Fit Kitchen</h3>
+                    </div>
+                    <p class="text-sm text-brand-200 leading-relaxed">Mysore's premier high-protein Indian meal prep service. Clean, delicious, and macro-accurate meals delivered daily.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold font-fredoka mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#menu-explore" class="hover:text-brand-300 transition-colors">Our Menu</a></li>
+                        <li><a href="#estimator" class="hover:text-brand-300 transition-colors">Macro Calculator</a></li>
+                        <li><a href="#plans" class="hover:text-brand-300 transition-colors">Meal Plans</a></li>
+                        <li><a href="#faq" class="hover:text-brand-300 transition-colors">FAQs</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold font-fredoka mb-4">Contact Us</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center gap-2"><i class="fa-brands fa-whatsapp text-emerald-400"></i> +91 XXXXX XXXXX</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-envelope text-emerald-400"></i> hello@anusfitkitchen.in</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-emerald-400"></i> Mysore, Karnataka</li>
+                    </ul>
+                    <div class="flex gap-3 mt-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-brand-800 hover:bg-brand-700 flex items-center justify-center transition-colors" aria-label="Instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-brand-800 hover:bg-brand-700 flex items-center justify-center transition-colors" aria-label="Facebook">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-brand-800 pt-6 text-center text-sm text-brand-300">
+                <p>&copy; 2026 Anu's Fit Kitchen. All rights reserved. | Presented by Anu's Chicken Shop ♥</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Plan Modal -->
+    <div id="plan-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative animate-slideIn">
+            <button onclick="closePlanModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600 focus:outline-none" aria-label="Close modal">
+                <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
+            <div class="text-center">
+                <div class="text-5xl mb-4">💬</div>
+                <h3 id="modal-title" class="text-2xl font-bold text-brand-900 font-fredoka mb-2">Start Your Fit Journey!</h3>
+                <p class="text-stone-600 mb-6 font-quicksand">You're interested in <strong id="selected-plan"></strong>. Click below to chat with us on WhatsApp!</p>
+                <a href="#" 
+                   id="whatsapp-link"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="inline-flex items-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-all transform hover:-translate-y-1 text-lg font-fredoka">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <span>Chat on WhatsApp</span>
+                </a>
+                <button onclick="closePlanModal()" class="mt-4 block w-full text-stone-500 hover:text-stone-700 font-semibold text-sm focus:outline-none">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // =====================================================================
+    // STATE
+    // =====================================================================
+    // FIX: Use safe key names with no hyphens to avoid .replace() bugs
+    // 'nonveg' | 'eggitarian' | 'vegetarian'
+    let activeDietProfile = 'nonveg';
+    let fitnessGoal = 'Cut';
+    let weight = 70;
+
+    // FIX: Diet profile keys are 'nonveg', 'eggitarian', 'vegetarian' everywhere
+    const DIET_PROFILES = ['nonveg', 'eggitarian', 'vegetarian'];
+    const DIET_LABELS = {
+        nonveg: 'Non-Vegetarian (Chicken + Eggs + Veg included)',
+        eggitarian: 'Eggitarian (Eggs + Veg included)',
+        vegetarian: 'Vegetarian (Veg only)'
+    };
+
+    // =====================================================================
+    // MENU DATA — keys match DIET_PROFILES
+    // =====================================================================
+    const weeklyMenu = {
+        nonveg: {
+            Sunday: [
+                { id:1, protein:'chicken', title:'Chicken Tikka + Brown Rice', description:'Grilled chicken tikka with desi spices, fluffy brown rice and cucumber raita', calories:480, protein_g:45, carbs_g:40, fat_g:15, emoji:'🍗', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Chicken breast','Curd','Brown rice','Cucumber','Herbs'] },
+                { id:2, protein:'egg', title:'Egg White Bhurji + Oats', description:'Spicy egg white scramble with onions, tomatoes, and green chilies with creamy oats', calories:420, protein_g:38, carbs_g:36, fat_g:12, emoji:'🥚', carbs_type:'Oats', carbs_serving:'½ cup cooked', ingredients:['Egg whites','Oats','Onion','Tomato','Chili'] },
+                { id:3, protein:'veg', title:'Paneer Bhurji + Brown Rice', description:'Low-fat paneer bhurji with mild spices and brown rice', calories:460, protein_g:32, carbs_g:48, fat_g:16, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Paneer','Brown rice','Tomato','Bell pepper'] }
+            ],
+            Monday: [
+                { id:4, protein:'chicken', title:'Chicken Curry + Brown Rice', description:'Light coconut chicken curry with brown rice', calories:490, protein_g:46, carbs_g:42, fat_g:16, emoji:'🍗', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Chicken breast','Tomato','Coconut','Brown rice'] },
+                { id:5, protein:'veg', title:'Dal Tadka + Brown Rice', description:'Protein-rich yellow dal tadka with brown rice and mixed vegetables', calories:460, protein_g:29, carbs_g:54, fat_g:13, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Yellow lentils','Brown rice','Mixed vegetables','Spices'] }
+            ],
+            Tuesday: [
+                { id:6, protein:'chicken', title:'Chicken Tandoori + Oats', description:'Tandoori marinated chicken with creamy oats', calories:500, protein_g:48, carbs_g:40, fat_g:17, emoji:'🍗', carbs_type:'Oats', carbs_serving:'½ cup cooked', ingredients:['Chicken breast','Tandoori masala','Oats'] },
+                { id:7, protein:'egg', title:'Egg Bhurji + Oats', description:'Spicy egg bhurji with creamy oats', calories:440, protein_g:40, carbs_g:38, fat_g:14, emoji:'🥚', carbs_type:'Oats', carbs_serving:'½ cup cooked', ingredients:['Eggs','Oats','Tomato','Onion','Chili'] }
+            ],
+            Wednesday: [
+                { id:8, protein:'chicken', title:'Chicken Breast Curry + Brown Rice', description:'Tikka-style chicken breast in onion-tomato gravy with brown rice', calories:480, protein_g:46, carbs_g:40, fat_g:15, emoji:'🍗', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Chicken breast','Tomato','Brown rice','Spices'] }
+            ],
+            Thursday: [
+                { id:9, protein:'veg', title:'Rajma + Brown Rice', description:'Creamy rajma curry with brown rice and salad', calories:470, protein_g:27, carbs_g:60, fat_g:12, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Kidney beans','Brown rice','Salad','Spices'] }
+            ],
+            Friday: [
+                { id:10, protein:'chicken', title:'Chicken Tikka + Oats', description:'Grilled chicken tikka with creamy oats', calories:490, protein_g:47, carbs_g:40, fat_g:16, emoji:'🍗', carbs_type:'Oats', carbs_serving:'½ cup cooked', ingredients:['Chicken breast','Spices','Oats'] },
+                { id:11, protein:'egg', title:'Egg Omelette + Brown Rice', description:'3-egg omelette with half cup brown rice', calories:450, protein_g:42, carbs_g:42, fat_g:13, emoji:'🥚', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Eggs','Brown rice','Vegetables'] }
+            ],
+            Saturday: [
+                { id:12, protein:'veg', title:'Moong Dal Khichdi', description:'Protein-rich moong dal khichdi with vegetables', calories:440, protein_g:26, carbs_g:56, fat_g:11, emoji:'🥦', carbs_type:'Brown Rice/Millet', carbs_serving:'½ cup cooked', ingredients:['Moong dal','Rice/millet','Vegetables','Spices'] }
+            ]
+        },
+        eggitarian: {
+            Sunday: [
+                { id:13, protein:'egg', title:'Egg White Bhurji + Oats', description:'Spicy egg white scramble with onions, tomatoes, and green chilies with creamy oats', calories:420, protein_g:38, carbs_g:36, fat_g:12, emoji:'🥚', carbs_type:'Oats', carbs_serving:'½ cup cooked', ingredients:['Egg whites','Oats','Onion','Tomato','Chili'] }
+            ],
+            Monday: [
+                { id:14, protein:'veg', title:'Dal Tadka + Brown Rice', description:'Protein-rich yellow dal tadka with brown rice and mixed vegetables', calories:460, protein_g:29, carbs_g:54, fat_g:13, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Yellow lentils','Brown rice','Mixed vegetables','Spices'] }
+            ],
+            Tuesday: [
+                { id:15, protein:'egg', title:'Egg Bhurji + Oats', description:'Spicy egg bhurji with creamy oats', calories:440, protein_g:40, carbs_g:38, fat_g:14, emoji:'🥚', carbs_type:'Oats', carbs_serving:'½ cup cooked', ingredients:['Eggs','Oats','Tomato','Onion','Chili'] }
+            ],
+            Wednesday: [
+                { id:16, protein:'veg', title:'Chole + Brown Rice', description:'Spicy chole with brown rice', calories:480, protein_g:28, carbs_g:62, fat_g:12, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Chickpeas','Brown rice','Vegetables','Spices'] }
+            ],
+            Thursday: [
+                { id:17, protein:'veg', title:'Rajma + Brown Rice', description:'Creamy rajma curry with brown rice and salad', calories:470, protein_g:27, carbs_g:60, fat_g:12, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Kidney beans','Brown rice','Salad','Spices'] }
+            ],
+            Friday: [
+                { id:18, protein:'egg', title:'Egg Omelette + Brown Rice', description:'3-egg omelette with half cup brown rice', calories:450, protein_g:42, carbs_g:42, fat_g:13, emoji:'🥚', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Eggs','Brown rice','Vegetables'] }
+            ],
+            Saturday: [
+                { id:19, protein:'veg', title:'Moong Dal Khichdi', description:'Protein-rich moong dal khichdi with vegetables', calories:440, protein_g:26, carbs_g:56, fat_g:11, emoji:'🥦', carbs_type:'Brown Rice/Millet', carbs_serving:'½ cup cooked', ingredients:['Moong dal','Rice/millet','Vegetables','Spices'] }
+            ]
+        },
+        vegetarian: {
+            Sunday: [
+                { id:20, protein:'veg', title:'Paneer Bhurji + Brown Rice', description:'Low-fat paneer bhurji with brown rice', calories:460, protein_g:32, carbs_g:48, fat_g:16, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Paneer','Brown rice','Tomato','Bell pepper'] }
+            ],
+            Monday: [
+                { id:21, protein:'veg', title:'Dal Tadka + Brown Rice', description:'Protein-rich yellow dal tadka with brown rice and mixed vegetables', calories:460, protein_g:29, carbs_g:54, fat_g:13, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Yellow lentils','Brown rice','Mixed vegetables','Spices'] }
+            ],
+            Tuesday: [
+                { id:22, protein:'veg', title:'Chole + Brown Rice', description:'Spicy chole with brown rice', calories:480, protein_g:28, carbs_g:62, fat_g:12, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Chickpeas','Brown rice','Vegetables','Spices'] }
+            ],
+            Wednesday: [
+                { id:23, protein:'veg', title:'Rajma + Brown Rice', description:'Creamy rajma curry with brown rice and salad', calories:470, protein_g:27, carbs_g:60, fat_g:12, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Kidney beans','Brown rice','Salad','Spices'] }
+            ],
+            Thursday: [
+                { id:24, protein:'veg', title:'Moong Dal Khichdi', description:'Protein-rich moong dal khichdi with vegetables', calories:440, protein_g:26, carbs_g:56, fat_g:11, emoji:'🥦', carbs_type:'Brown Rice/Millet', carbs_serving:'½ cup cooked', ingredients:['Moong dal','Rice/millet','Vegetables','Spices'] }
+            ],
+            Friday: [
+                { id:25, protein:'veg', title:'Masoor Dal + Brown Rice', description:'Pink lentil masoor dal with brown rice', calories:450, protein_g:29, carbs_g:58, fat_g:10, emoji:'🥦', carbs_type:'Brown Rice', carbs_serving:'½ cup cooked', ingredients:['Masoor dal','Brown rice','Vegetables','Spices'] }
+            ],
+            Saturday: [
+                { id:26, protein:'veg', title:'Vegetable Curd Rice', description:'Mixed vegetables with curd rice', calories:430, protein_g:25, carbs_g:55, fat_g:9, emoji:'🥦', carbs_type:'Rice', carbs_serving:'½ cup cooked', ingredients:['Mixed vegetables','Curd','Rice','Spices'] }
+            ]
+        }
+    };
+
+    // =====================================================================
+    // DIET PROFILE TOGGLE — FIX: no string manipulation on IDs
+    // =====================================================================
+    function setDietProfile(profile) {
+        activeDietProfile = profile;
+
+        // Update all buttons
+        DIET_PROFILES.forEach(function(p) {
+            var btn = document.getElementById('diet-btn-' + p);
+            var lbl = document.getElementById('diet-label-' + p);
+            if (!btn || !lbl) return;
+
+            if (p === profile) {
+                btn.classList.remove('diet-btn-inactive');
+                btn.classList.add('diet-btn-active');
+                btn.setAttribute('aria-pressed', 'true');
+                lbl.textContent = 'ACTIVE';
+            } else {
+                btn.classList.remove('diet-btn-active');
+                btn.classList.add('diet-btn-inactive');
+                btn.setAttribute('aria-pressed', 'false');
+                lbl.textContent = 'INACTIVE';
+            }
+        });
+
+        // Update summary
+        var summary = document.getElementById('active-profile-summary');
+        if (summary) {
+            summary.textContent = 'Current Diet Profile: ' + DIET_LABELS[profile];
+        }
+
+        renderMenu();
+    }
+
+    // =====================================================================
+    // MENU RENDERING
+    // =====================================================================
+    function renderWeeklyMenuCards() {
+        var container = document.getElementById('weekly-menu-cards');
+        if (!container) return;
+
+        var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        var profile = weeklyMenu[activeDietProfile];
+        var html = '';
+
+        days.forEach(function(day) {
+            var meals = profile[day];
+            if (!meals || meals.length === 0) return;
+            var m = meals[0];
+            html += '<div class="bg-white rounded-xl p-4 border border-brand-200 cursor-pointer hover:shadow-md transition-shadow" onclick="showDayDetails(\'' + day + '\')">'
+                + '<div class="flex items-center gap-3">'
+                + '<span class="text-3xl">' + m.emoji + '</span>'
+                + '<div class="flex-1">'
+                + '<div class="flex items-center justify-between">'
+                + '<span class="text-sm font-bold text-stone-500">' + day + '</span>'
+                + '<span class="text-xs font-bold text-emerald-600">' + m.carbs_type + '</span>'
+                + '</div>'
+                + '<h4 class="font-bold text-brand-900 text-sm font-fredoka">' + m.title + '</h4>'
+                + '<div class="text-xs text-stone-500 mt-0.5">' + meals.length + ' meal' + (meals.length > 1 ? 's' : '') + '</div>'
+                + '</div></div></div>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    function showDayDetails(day) {
+        var container = document.getElementById('dynamic-menu-container');
+        if (!container) return;
+
+        var profile = weeklyMenu[activeDietProfile];
+        var meals = profile[day];
+
+        if (!meals || meals.length === 0) {
+            container.innerHTML = '<div class="col-span-full text-center py-12"><div class="text-6xl mb-4">🔍</div><h3 class="text-xl font-bold text-brand-900 font-fredoka mb-2">No meals for this day</h3><p class="text-stone-600">Try a different profile</p></div>';
+            return;
+        }
+
+        var html = '<div class="col-span-full bg-brand-50 rounded-xl p-5 border border-brand-200 mb-2">'
+            + '<h2 class="text-xl font-bold text-brand-900 font-fredoka">' + day + '\'s Menu</h2>'
+            + '<p class="text-sm text-stone-500 mt-1">Served with ' + meals[0].carbs_type + ' (' + meals[0].carbs_serving + ') for balanced macros.</p>'
+            + '</div>';
+
+        meals.forEach(function(meal) {
+            html += '<div class="bg-white rounded-xl p-5 border-2 border-brand-200 meal-card">'
+                + '<div class="flex items-start justify-between mb-3">'
+                + '<div class="flex items-center gap-3">'
+                + '<span class="text-3xl">' + meal.emoji + '</span>'
+                + '<div>'
+                + '<span class="text-[10px] font-bold text-stone-400 uppercase">' + meal.protein + '</span>'
+                + '<h3 class="text-base font-bold text-brand-900 font-fredoka leading-tight">' + meal.title + '</h3>'
+                + '</div></div>'
+                + '<div class="text-right shrink-0 ml-2">'
+                + '<div class="font-bold text-brand-800 text-sm">' + meal.calories + ' kcal</div>'
+                + '<div class="text-xs text-emerald-700 font-bold">🥩 ' + meal.protein_g + 'g</div>'
+                + '</div></div>'
+                + '<p class="text-xs text-stone-600 mb-3 leading-relaxed">' + meal.description + '</p>'
+                + '<div class="bg-brand-50 rounded-lg p-3 mb-3">'
+                + '<div class="text-xs font-bold text-stone-500 mb-1">Carbs: <span class="text-emerald-700">' + meal.carbs_type + ' — ' + meal.carbs_serving + '</span></div>'
+                + '<div class="text-xs text-stone-500">' + meal.ingredients.join(', ') + '</div>'
+                + '</div>'
+                + '<div class="flex gap-3 text-[10px] font-bold text-stone-400">'
+                + '<span>P: ' + meal.protein_g + 'g</span>'
+                + '<span>C: ' + meal.carbs_g + 'g</span>'
+                + '<span>F: ' + meal.fat_g + 'g</span>'
+                + '</div></div>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    function renderMenu() {
+        renderWeeklyMenuCards();
+        var days = Object.keys(weeklyMenu[activeDietProfile]);
+        if (days.length > 0) showDayDetails(days[0]);
+    }
+
+    // =====================================================================
+    // FITNESS GOAL TOGGLE — FIX: clear approach using classList
+    // =====================================================================
+    var GOALS = ['Cut', 'Maintain', 'Bulk'];
+
+    function setFitnessGoal(goal) {
+        fitnessGoal = goal;
+        GOALS.forEach(function(g) {
+            var btn = document.getElementById('goal-' + g.toLowerCase());
+            if (!btn) return;
+            if (g === goal) {
+                btn.classList.add('goal-btn-active');
+                btn.classList.remove('goal-btn-inactive');
+                btn.setAttribute('aria-pressed', 'true');
+            } else {
+                btn.classList.remove('goal-btn-active');
+                btn.classList.add('goal-btn-inactive');
+                btn.setAttribute('aria-pressed', 'false');
+            }
+        });
+        updateMacros();
+    }
+
+    // =====================================================================
+    // MACRO CALCULATOR — FIX: use correct slider value on init
+    // =====================================================================
+    function updateMacros() {
+        var slider = document.getElementById('weight-slider');
+        if (!slider) return;
+        weight = parseInt(slider.value, 10);
+
+        var display = document.getElementById('weight-display');
+        if (display) display.textContent = weight + ' kg';
+
+        var calories, protein, planName;
+
+        if (fitnessGoal === 'Cut') {
+            calories = Math.round(weight * 19);
+            protein  = Math.round(weight * 1.8);
+            planName = '2 Meals A Day (Best for fat loss)';
+        } else if (fitnessGoal === 'Maintain') {
+            calories = Math.round(weight * 27);
+            protein  = Math.round(weight * 1.6);
+            planName = '2 Meals A Day (Maintenance)';
+        } else {
+            calories = Math.round(weight * 32);
+            protein  = Math.round(weight * 2.0);
+            planName = '3 Meals A Day (Ideal for lean bulk)';
+        }
+
+        var calEl = document.getElementById('macro-calories');
+        var proEl = document.getElementById('macro-protein');
+        var planEl = document.getElementById('recommended-plan-name');
+
+        if (calEl) calEl.textContent = '~ ' + calories.toLocaleString() + ' Kcal';
+        if (proEl) proEl.textContent = '🥩 ~ ' + protein + 'g Protein / day';
+        if (planEl) planEl.textContent = planName;
+    }
+
+    // =====================================================================
+    // MOBILE MENU
+    // =====================================================================
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+        var menu = document.getElementById('mobile-menu');
+        var btn  = document.getElementById('mobile-menu-btn');
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+        menu.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    function closeMobileMenu() {
+        var menu = document.getElementById('mobile-menu');
+        var btn  = document.getElementById('mobile-menu-btn');
+        menu.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+    }
+
+    // =====================================================================
+    // PLAN MODAL
+    // =====================================================================
+    function openPlanModal(plan) {
+        var profileLabels = { nonveg:'Non-Vegetarian', eggitarian:'Eggitarian', vegetarian:'Vegetarian' };
+        document.getElementById('selected-plan').textContent = plan;
+        var msg = encodeURIComponent('Hi, I\'m interested in the ' + plan + ' plan with ' + (profileLabels[activeDietProfile] || '') + ' diet profile.');
+        document.getElementById('whatsapp-link').href = 'https://wa.me/91XXXXXXXXXX?text=' + msg;
+        document.getElementById('plan-modal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePlanModal() {
+        document.getElementById('plan-modal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('plan-modal').addEventListener('click', function(e) {
+        if (e.target === this) closePlanModal();
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closePlanModal();
+    });
+
+    // =====================================================================
+    // DELIVERY CHECKER — FIX: get areaInput from DOM inside the function
+    // =====================================================================
+    function checkDelivery() {
+        var areaInput  = document.getElementById('area-input'); // FIX: declared locally
+        var resultEl   = document.getElementById('delivery-result');
+        var area       = areaInput ? areaInput.value.trim().toLowerCase() : '';
+
+        if (!area) {
+            resultEl.classList.remove('hidden','bg-green-100','text-green-700');
+            resultEl.classList.add('bg-red-100','text-red-700');
+            resultEl.innerHTML = '<div class="flex items-center gap-2"><i class="fa-solid fa-exclamation-triangle"></i><span>Please enter your area to check delivery availability.</span></div>';
+            return;
+        }
+
+        var popularAreas = ['vv mohalla','devaraja market','karnataka','gokulam','saraswathipura','jaganmohan palace'];
+        var isPopular = popularAreas.some(function(pa){ return area.includes(pa); });
+        var isCity    = area.includes('mysore') || area.includes('mysuru');
+
+        resultEl.classList.remove('hidden');
+
+        if (isPopular || isCity) {
+            resultEl.classList.remove('bg-red-100','text-red-700');
+            resultEl.classList.add('bg-green-100','text-green-700');
+            resultEl.innerHTML = '<div class="flex items-center gap-2 font-bold"><i class="fa-solid fa-check-circle"></i><span>Great! We deliver to your area.</span></div>'
+                + '<p class="text-sm mt-2">Tap Inquire About Plans above and mention your area to get started!</p>'
+                + '<a href="#plans" class="mt-3 inline-flex items-center gap-2 bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg text-sm hover:bg-emerald-700 transition-colors">'
+                + '<i class="fa-solid fa-calendar-check"></i> View Plans</a>';
+        } else {
+            resultEl.classList.remove('bg-green-100','text-green-700');
+            resultEl.classList.add('bg-red-100','text-red-700');
+            resultEl.innerHTML = '<div class="flex items-center gap-2"><i class="fa-solid fa-times-circle"></i>'
+                + '<span>We don\'t currently deliver to that area. Please contact us — we may be able to arrange it!</span></div>'
+                + '<a href="https://wa.me/91XXXXXXXXXX?text=' + encodeURIComponent('Hi, I\'m interested in delivery to ' + areaInput.value.trim()) + '" target="_blank" rel="noopener noreferrer" '
+                + 'class="mt-3 inline-flex items-center gap-2 bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg text-sm hover:bg-emerald-700 transition-colors">'
+                + '<i class="fa-brands fa-whatsapp"></i> Ask on WhatsApp</a>';
+        }
+    }
+
+    // =====================================================================
+    // MACRO PLAN INQUIRY
+    // =====================================================================
+    function triggerMacroPlanInquiry() {
+        var planName = document.getElementById('recommended-plan-name').textContent;
+        var cals     = document.getElementById('macro-calories').textContent;
+        var prot     = document.getElementById('macro-protein').textContent;
+        var profileLabels = { nonveg:'Non-Vegetarian', eggitarian:'Eggitarian', vegetarian:'Vegetarian' };
+        var msg = encodeURIComponent('Hi Anu! I\'m interested in the ' + planName + ' with ' + (profileLabels[activeDietProfile]||'') + ' diet. My target: ' + cals + ', ' + prot + '. Please guide me!');
+        window.open('https://wa.me/91XXXXXXXXXX?text=' + msg, '_blank');
+    }
+
+    // =====================================================================
+    // INIT — runs after DOM is ready
+    // =====================================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wire up weight slider
+        document.getElementById('weight-slider').addEventListener('input', updateMacros);
+
+        // Initialize diet profile (nonveg active by default)
+        setDietProfile('nonveg');
+
+        // Initialize macro calculator
+        setFitnessGoal('Cut');
+    });
+    </script>
+</body>
+</html>
