@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Lightweight Kitchen — Kitchen Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<style>
+:root {
+  --bg: #F0EBE1;
+  --card: #FFFDF9;
+  --green: #2D6A4F;
+  --green-light: #D8F3DC;
+  --green-mid: #74C69D;
+  --amber: #F4A261;
+  --amber-light: #FFF0E0;
+  --rose: #E76F51;
+  --rose-light: #FDECEA;
+  --purple: #9B8EC4;
+  --purple-light: #EDE9F8;
+  --sky: #4DA8C2;
+  --sky-light: #E0F4FA;
+  --shadow: 4px 4px 0px rgba(0,0,0,0.06), 0 2px 16px rgba(0,0,0,0.05);
+  --shadow-sm: 2px 2px 0px rgba(0,0,0,0.05), 0 1px 8px rgba(0,0,0,0.04);
+  --shadow-lg: 6px 6px 0px rgba(0,0,0,0.07), 0 4px 28px rgba(0,0,0,0.08);
+  --radius: 18px;
+  --radius-sm: 11px;
+  --radius-lg: 24px;
+  --sidebar-w: 66px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); min-height: 100vh; color: #1a1a1a; overflow-x: hidden; }
+
+/* ── Loading ── */
+#fb-loading {
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 9999; gap: 14px;
+}
+#fb-loading .spinner {
+  width: 36px; height: 36px; border: 3px solid var(--green-light);
+  border-top-color: var(--green); border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+#fb-loading p { font-size: 13px; font-weight: 600; color: #888; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Icon base ── */
+.icon { width: 1em; height: 1em; display: inline-block; vertical-align: -0.125em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.icon-fill { fill: currentColor; stroke: none; }
+
+/* ── Shell ── */
+.shell { display: flex; min-height: 100vh; }
+
+/* ── Desktop Sidebar ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--green);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 18px 0; gap: 4px;
+  position: fixed; top: 0; left: 0; height: 100vh;
+  z-index: 100;
+  border-radius: 0 18px 18px 0;
+  box-shadow: 3px 0 16px rgba(45,106,79,0.18);
+}
+.sidebar-logo {
+  width: 40px; height: 40px; background: #fff;
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px; box-shadow: var(--shadow-sm); flex-shrink: 0;
+  color: var(--green); font-size: 20px;
+}
+.sidebar-logo .icon { width: 22px; height: 22px; }
+.nav-item {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .18s; position: relative; flex-shrink: 0;
+  color: #fff;
+}
+.nav-item .icon { width: 20px; height: 20px; }
+.nav-item.active, .nav-item:hover { background: rgba(255,255,255,0.15); }
+.nav-item .tooltip {
+  position: absolute; left: 56px; background: #1a1a1a; color: #fff;
+  font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 7px;
+  white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .12s;
+  z-index: 200;
+}
+.nav-item:hover .tooltip { opacity: 1; }
+.sidebar-bottom { margin-top: auto; }
+
+/* ── Mobile Bottom Nav ── */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--green);
+  z-index: 100;
+  padding: 0 0 env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -2px 20px rgba(45,106,79,0.25);
+  border-radius: 20px 20px 0 0;
+}
+.bottom-nav-inner {
+  display: flex; justify-content: space-around; align-items: center;
+  padding: 10px 4px 8px;
+}
+.bnav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 6px 10px; border-radius: 10px; cursor: pointer;
+  transition: all .18s; min-width: 52px;
+  color: rgba(255,255,255,0.5);
+}
+.bnav-item .icon { width: 19px; height: 19px; opacity: 0.65; transition: opacity .18s; }
+.bnav-item span.bnav-label { font-size: 9.5px; font-weight: 700; color: rgba(255,255,255,0.5); transition: color .18s; line-height: 1; }
+.bnav-item.active .icon { opacity: 1; }
+.bnav-item.active .bnav-label { color: #fff; }
+
+/* ── Main ── */
+.main { margin-left: var(--sidebar-w); padding: 20px; flex: 1; min-width: 0; }
+
+/* ── Topbar ── */
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+.topbar-left h1 { font-size: 19px; font-weight: 900; color: #1a1a1a; letter-spacing: -0.4px; line-height: 1.2; display: flex; align-items: center; gap: 8px; }
+.topbar-left h1 .icon { width: 20px; height: 20px; color: var(--green); }
+.topbar-left p { font-size: 11px; color: #888; margin-top: 3px; font-weight: 500; }
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 9px 16px; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: all .18s; white-space: nowrap; }
+.btn .icon { width: 14px; height: 14px; }
+.btn-primary { background: var(--green); color: #fff; box-shadow: var(--shadow-sm); }
+.btn-primary:hover { background: #245a42; transform: translateY(-1px); }
+.btn-ghost { background: var(--card); color: #555; box-shadow: var(--shadow-sm); }
+.btn-ghost:hover { background: #ede9e0; }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
+.date-badge { background: var(--card); border-radius: var(--radius-sm); padding: 7px 12px; font-size: 11px; font-weight: 600; color: #555; box-shadow: var(--shadow-sm); white-space: nowrap; }
+
+/* ── Grid ── */
+.bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-6 { grid-column: span 6; }
+.col-8 { grid-column: span 8; }
+.col-9 { grid-column: span 9; }
+.col-12 { grid-column: span 12; }
+
+/* ── Card ── */
+.card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; position: relative; overflow: hidden; transition: transform .18s, box-shadow .18s; }
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.card-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #999; margin-bottom: 8px; line-height: 1.4; display: flex; align-items: center; gap: 5px; }
+.card-label .icon { width: 12px; height: 12px; }
+.card-value { font-size: 36px; font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; }
+.card-sub { font-size: 11px; color: #888; margin-top: 6px; font-weight: 500; line-height: 1.4; }
+.blob { position: absolute; border-radius: 50%; opacity: .1; pointer-events: none; }
+
+/* ── Donut ── */
+.donut-wrap { position: relative; width: 110px; height: 110px; margin: 0 auto; }
+.donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+.donut-center .total { font-size: 24px; font-weight: 900; line-height: 1; }
+.donut-center .lbl { font-size: 8px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: .06em; }
+.legend-row { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #555; margin-top: 5px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── Slot breakdown ── */
+.slot-mini-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.slot-mini { background: #f5f1ea; border-radius: 12px; padding: 11px 10px; }
+.slot-mini-title { font-size: 9.5px; font-weight: 700; color: #aaa; text-transform: uppercase; margin-bottom: 8px; letter-spacing: .05em; line-height: 1; display: flex; align-items: center; gap: 4px; }
+.slot-mini-title .icon { width: 11px; height: 11px; }
+.slot-diet-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; margin-bottom: 3px; line-height: 1.4; }
+.slot-diet-row .label { font-weight: 600; color: #555; display: flex; align-items: center; gap: 4px; }
+.slot-diet-row .label .icon { width: 11px; height: 11px; }
+.slot-diet-row .count { font-weight: 800; color: #1a1a1a; }
+
+/* ── Pill ── */
+.pill { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 700; line-height: 1.5; white-space: nowrap; }
+.pill .icon { width: 10px; height: 10px; }
+.pill-green  { background: var(--green-light); color: var(--green); }
+.pill-amber  { background: var(--amber-light); color: #b55a1a; }
+.pill-rose   { background: var(--rose-light); color: #b54030; }
+.pill-purple { background: var(--purple-light); color: #5b4a99; }
+.pill-sky    { background: var(--sky-light); color: #1e6f85; }
+.pill-gray   { background: #f0f0f0; color: #666; }
+
+/* ── Avatar ── */
+.avatar { width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0; }
+
+/* ── Table ── */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; line-height: 1.45; }
+thead th { text-align: left; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #aaa; padding: 0 10px 10px; white-space: nowrap; border-bottom: 1px solid #f0ede7; }
+tbody tr { border-top: 1px solid #f5f2ed; transition: background .12s; }
+tbody tr:hover { background: #faf8f4; }
+tbody td { padding: 12px 10px; vertical-align: middle; }
+
+/* ── Action buttons ── */
+.action-btn { width: 28px; height: 28px; border-radius: 8px; border: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all .12s; flex-shrink: 0; background: transparent; line-height: 1; color: #666; }
+.action-btn .icon { width: 15px; height: 15px; }
+.action-btn:hover { transform: scale(1.15); background: rgba(0,0,0,0.06); }
+.actions-row { display: flex; gap: 4px; flex-wrap: nowrap; align-items: center; }
+
+/* ── Reminder items ── */
+.reminder-item { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid #f0ede7; }
+.reminder-item:last-child { border-bottom: none; }
+.reminder-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.reminder-icon .icon { width: 17px; height: 17px; }
+.reminder-text { flex: 1; min-width: 0; }
+.reminder-text strong { display: block; font-size: 12px; font-weight: 700; color: #1a1a1a; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.reminder-text span { font-size: 10px; color: #aaa; font-weight: 500; line-height: 1.5; display: block; margin-top: 1px; }
+.reminder-urgency { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+.urgency-today { background: #FDECEA; color: #b54030; }
+.urgency-soon  { background: #FFF0E0; color: #b55a1a; }
+.urgency-ok    { background: var(--green-light); color: var(--green); }
+.reminder-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+/* ── Modal ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); backdrop-filter: blur(5px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--card); border-radius: var(--radius-lg); max-width: 580px; width: 100%; max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-lg), 0 0 0 1px rgba(0,0,0,.04); }
+.modal::-webkit-scrollbar { width: 3px; }
+.modal::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px 14px; border-bottom: 1px solid #f0ede7; position: sticky; top: 0; background: var(--card); z-index: 10; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.modal-header h2 { font-size: 16px; font-weight: 900; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px; }
+.modal-header h2 .icon { width: 17px; height: 17px; color: var(--green); }
+.modal-close { width: 32px; height: 32px; border-radius: 9px; background: #f0ede7; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; }
+.modal-close .icon { width: 15px; height: 15px; }
+.modal-close:hover { background: var(--rose-light); }
+.modal-body { padding: 18px 22px; }
+.modal-footer { padding: 14px 22px 20px; border-top: 1px solid #f0ede7; display: flex; gap: 8px; justify-content: flex-end; position: sticky; bottom: 0; background: var(--card); border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+
+/* ── Forms ── */
+.form-group { margin-bottom: 13px; }
+.form-label { display: block; font-size: 10px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+.form-input { width: 100%; padding: 10px 12px; border-radius: var(--radius-sm); border: 1.5px solid #e0ddd8; background: #FAFAF8; font-size: 13px; line-height: 1.5; color: #1a1a1a; transition: border .15s; outline: none; }
+.form-input:focus { border-color: var(--green); background: #fff; }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 11px center; background-color: #FAFAF8; padding-right: 28px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.section-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--green); margin-bottom: 10px; margin-top: 4px; display: flex; align-items: center; gap: 5px; }
+.section-label .icon { width: 12px; height: 12px; }
+
+/* ── Diet cards ── */
+.diet-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.diet-card { border: 2px solid #e0ddd8; border-radius: 13px; padding: 13px 8px; text-align: center; cursor: pointer; transition: all .15s; }
+.diet-card.selected { border-color: var(--green); background: var(--green-light); }
+.diet-card .icon { width: 22px; height: 22px; margin-bottom: 5px; color: #555; }
+.diet-card.selected .icon { color: var(--green); }
+.diet-card .name { font-size: 10.5px; font-weight: 700; color: #333; line-height: 1.35; }
+.diet-card .desc { font-size: 9px; color: #aaa; margin-top: 3px; line-height: 1.3; }
+
+/* ── Day chips ── */
+.day-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+.day-chip { padding: 5px 11px; border-radius: 999px; font-size: 10.5px; font-weight: 700; border: 1.5px solid #e0ddd8; background: #fff; color: #666; cursor: pointer; transition: all .15s; }
+.day-chip.on { background: var(--green-light); border-color: var(--green); color: var(--green); }
+
+/* ── Search ── */
+.search-bar { display: flex; align-items: center; gap: 8px; background: #F5F0E8; border-radius: var(--radius-sm); padding: 8px 12px; border: 1.5px solid transparent; transition: border .15s; }
+.search-bar:focus-within { border-color: var(--green); background: #fff; }
+.search-bar input { border: none; background: transparent; font-size: 12px; font-weight: 500; color: #333; outline: none; width: 160px; min-width: 0; }
+.search-bar .search-icon { color: #aaa; width: 14px; height: 14px; flex-shrink: 0; }
+.filter-chip { display: inline-flex; align-items: center; gap: 4px; padding: 5px 11px; border-radius: 999px; font-size: 10px; font-weight: 700; cursor: pointer; border: 1.5px solid #e0ddd8; background: #fff; color: #666; transition: all .15s; white-space: nowrap; }
+.filter-chip .icon { width: 11px; height: 11px; }
+.filter-chip.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+/* ── Progress ── */
+.progress-bar { height: 6px; border-radius: 999px; background: #ede9e0; overflow: hidden; margin-top: 6px; }
+.progress-fill { height: 100%; border-radius: 999px; transition: width .4s; }
+
+/* ── View routing ── */
+.view { display: none; }
+.view.active { display: block; }
+.view-title { font-size: 17px; font-weight: 900; margin-bottom: 16px; letter-spacing: -0.4px; display: flex; align-items: center; gap: 8px; }
+.view-title .icon { width: 18px; height: 18px; color: var(--green); }
+
+/* ── Toast ── */
+.toast { position: fixed; bottom: 80px; right: 16px; background: #1a1a1a; color: #fff; font-size: 12px; font-weight: 600; padding: 11px 18px; border-radius: 12px; box-shadow: var(--shadow-lg); z-index: 999; transform: translateY(60px); opacity: 0; transition: all .28s; display: flex; align-items: center; gap: 7px; max-width: calc(100vw - 32px); }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast .icon { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* ── Map input ── */
+.map-input-wrap { position: relative; }
+.map-input-wrap .form-input { padding-left: 36px; }
+.map-input-wrap .map-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: #999; }
+
+/* ── Pause dates ── */
+.pause-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; padding: 12px; background: var(--amber-light); border-radius: 12px; border: 1.5px solid var(--amber); }
+
+/* ── FAB ── */
+.fab { display: none; position: fixed; right: 18px; bottom: 76px; width: 52px; height: 52px; border-radius: 50%; background: var(--green); color: #fff; border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(45,106,79,0.4); z-index: 98; align-items: center; justify-content: center; transition: transform .18s; }
+.fab .icon { width: 22px; height: 22px; }
+.fab:active { transform: scale(0.93); }
+
+/* ── Delivery sections ── */
+.delivery-section { margin-bottom: 22px; }
+.delivery-section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding: 8px 12px; background: #f5f1ea; border-radius: 11px; }
+.delivery-section-header .section-emoji { width: 18px; height: 18px; color: var(--green); }
+.delivery-section-header .section-title { font-size: 12px; font-weight: 800; color: #333; }
+.delivery-section-header .section-count { margin-left: auto; background: var(--card); border-radius: 999px; font-size: 10px; font-weight: 800; color: #666; padding: 2px 9px; }
+
+/* ── Packed section ── */
+.delivery-packed-section { margin-top: 18px; }
+.delivery-packed-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.delivery-packed-header .icon { width: 16px; height: 16px; color: var(--green); }
+.delivery-packed-header span.label-text { font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: .06em; }
+.delivery-packed-header .count-badge { background: var(--green-light); color: var(--green); font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+.packed-row td { opacity: 0.55; text-decoration: line-through; text-decoration-color: #aaa; }
+.packed-row td:last-child { text-decoration: none; }
+.packed-row { background: #f9f7f3 !important; }
+
+/* ── Slot checkbox labels ── */
+.slot-cb-label {
+  display: flex; align-items: center; gap: 9px; cursor: pointer;
+  padding: 10px 13px; border-radius: 11px; border: 1.5px solid #e0ddd8;
+  background: #FAFAF8; transition: all .15s;
+}
+.slot-cb-label:has(input:checked) { border-color: var(--green); background: var(--green-light); }
+.slot-cb-label span { font-size: 12px; font-weight: 600; color: #333; line-height: 1.4; }
+.slot-cb-label .slot-time { font-size: 10px; color: #aaa; font-weight: 500; display: block; margin-top: 1px; }
+
+/* ── Renewal payment modal ── */
+.payment-option { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 12px; border: 2px solid #e0ddd8; cursor: pointer; transition: all .15s; margin-bottom: 8px; }
+.payment-option.selected { border-color: var(--green); background: var(--green-light); }
+.payment-option .po-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.payment-option .po-icon .icon { width: 18px; height: 18px; }
+.payment-option .po-label { font-size: 13px; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
+.payment-option .po-desc { font-size: 10.5px; color: #aaa; font-weight: 500; margin-top: 1px; }
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+  .col-3 { grid-column: span 6; }
+  .col-4 { grid-column: span 6; }
+  .col-6 { grid-column: span 12; }
+  .col-8 { grid-column: span 12; }
+  .col-9 { grid-column: span 12; }
+}
+@media (max-width: 640px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar { display: none; }
+  .bottom-nav { display: block; }
+  .fab { display: flex; }
+  .main { margin-left: 0; padding: 14px 12px 80px; }
+  .topbar-right .btn-primary { display: none; }
+  .col-2, .col-3, .col-4, .col-6, .col-8, .col-9 { grid-column: span 12; }
+  .form-row { grid-template-columns: 1fr; }
+  .diet-cards { grid-template-columns: 1fr 1fr 1fr; }
+  .topbar-left h1 { font-size: 16px; }
+  .date-badge { display: none; }
+  .slot-mini-grid { grid-template-columns: 1fr; }
+  .toast { bottom: 84px; right: 12px; left: 12px; max-width: unset; }
+  .bento { gap: 10px; }
+  table { font-size: 11px; }
+  tbody td { padding: 11px 8px; }
+  .actions-row { gap: 3px; }
+  .action-btn { width: 30px; height: 30px; }
+  .search-bar input { width: 110px; }
+  .modal-body { padding: 14px 16px; }
+  .modal-footer { padding: 12px 16px 16px; }
+  .modal-header { padding: 16px 16px 12px; }
+}
+@media (max-width: 380px) {
+  .diet-cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="fb-loading">
+  <div class="spinner"></div>
+  <p>Connecting to kitchen database…</p>
+</div>
+
+<!-- ══ SVG ICON SPRITE (hidden, referenced via <use>) ══ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <symbol id="ic-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 1 7-2 11-1.6 2.65-4 3.7-6 4Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
+  <symbol id="ic-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="ic-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="ic-bike" viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></symbol>
+  <symbol id="ic-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+  <symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></symbol>
+  <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="ic-drumstick" viewBox="0 0 24 24"><path d="M15.5 8.5c2 2 3 4.5 3 6.5a4 4 0 0 1-6.5 3.1l-4.6 4.6a2 2 0 1 1-2.6-2.6l4.6-4.6A4 4 0 0 1 12.5 9c1-1 2-1 3-.5Z"/><path d="M14 5a3 3 0 0 1 3-3c1.5 0 3 1 3 3s-1 3-3 3-3-1-3-3Z"/></symbol>
+  <symbol id="ic-egg" viewBox="0 0 24 24"><path d="M12 2C8 8 5 13 5 16.5A7 7 0 0 0 19 16.5C19 13 16 8 12 2Z"/></symbol>
+  <symbol id="ic-broccoli" viewBox="0 0 24 24"><circle cx="8" cy="6" r="3.2"/><circle cx="14" cy="5.5" r="3"/><circle cx="11" cy="9.5" r="3"/><path d="M11 12v9M11 16l-3 2M11 16l3 2"/></symbol>
+  <symbol id="ic-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+  <symbol id="ic-play" viewBox="0 0 24 24"><path d="M5 3l16 9-16 9V3Z"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="ic-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="ic-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></symbol>
+  <symbol id="ic-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="ic-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="ic-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+  <symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></symbol>
+  <symbol id="ic-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></symbol>
+  <symbol id="ic-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.95.36 1.88.68 2.78a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.32 1.83.55 2.78.68A2 2 0 0 1 22 16.92Z"/></symbol>
+  <symbol id="ic-whatsapp" viewBox="0 0 24 24"><path d="M3 21l1.65-4.95A8.5 8.5 0 1 1 8.5 19.4L3 21Z"/><path d="M8.5 9.5c0 3 2.5 5.5 5.5 5.5.6 0 1-.5 1-1v-1a1 1 0 0 0-1-1h-1l-1-2 1-1c0-1-1-2.5-2-2.5h-1a1 1 0 0 0-1 1v1Z"/></symbol>
+  <symbol id="ic-cash" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 6v.01M18 18v-.01"/></symbol>
+  <symbol id="ic-upi" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 18h6"/><path d="M9 6l3 4 3-4"/><path d="M12 10v4"/></symbol>
+  <symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 21v-1a7 7 0 0 1 14 0v1"/></symbol>
+  <symbol id="ic-warn" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="ic-celebrate" viewBox="0 0 24 24"><path d="M22 11l-1-1-1.5 1.5L18 10l-1.5 1.5L15 10l-7 7 1 1 7-7 1.5 1.5L19 11l1.5 1.5Z"/><path d="M3 21l4-9 5 5-9 4Z"/></symbol>
+  <symbol id="ic-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></symbol>
+  <symbol id="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
+  <symbol id="ic-sunrise" viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><path d="M12 2v7M4.22 10.22l1.42 1.42M1 18h2M21 18h2M18.36 11.64l1.42-1.42"/><path d="M23 22H1M8 6l4-4 4 4"/></symbol>
+  <symbol id="ic-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></symbol>
+  <symbol id="ic-note" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M5 3h9l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M9 13h6M9 17h6"/></symbol>
+  <symbol id="ic-package" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.27 6.96 12 12l8.73-5.04M12 22.08V12"/></symbol>
+</defs>
+</svg>
+
+<div class="shell">
+
+<!-- Desktop Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><svg class="icon"><use href="#ic-leaf"/></svg></div>
+  <div class="nav-item active" onclick="showView('dashboard')">
+    <svg class="icon"><use href="#ic-grid"/></svg><span class="tooltip">Dashboard</span>
+  </div>
+  <div class="nav-item" onclick="showView('subscribers')">
+    <svg class="icon"><use href="#ic-users"/></svg><span class="tooltip">Subscribers</span>
+  </div>
+  <div class="nav-item" onclick="showView('delivery')">
+    <svg class="icon"><use href="#ic-bike"/></svg><span class="tooltip">Today's Delivery</span>
+  </div>
+  <div class="nav-item" onclick="showView('reminders')">
+    <svg class="icon"><use href="#ic-bell"/></svg><span class="tooltip">Reminders</span>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="nav-item"><svg class="icon"><use href="#ic-settings"/></svg><span class="tooltip">Settings</span></div>
+  </div>
+</nav>
+
+<!-- Mobile Bottom Nav -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <div class="bnav-item active" onclick="showView('dashboard')">
+      <svg class="icon"><use href="#ic-grid"/></svg><span class="bnav-label">Home</span>
+    </div>
+    <div class="bnav-item" onclick="showView('subscribers')">
+      <svg class="icon"><use href="#ic-users"/></svg><span class="bnav-label">People</span>
+    </div>
+    <div class="bnav-item" onclick="showView('delivery')">
+      <svg class="icon"><use href="#ic-bike"/></svg><span class="bnav-label">Delivery</span>
+    </div>
+    <div class="bnav-item" onclick="showView('reminders')">
+      <svg class="icon"><use href="#ic-bell"/></svg><span class="bnav-label">Reminders</span>
+    </div>
+  </div>
+</nav>
+
+<!-- FAB -->
+<button class="fab" onclick="openModal('add')" title="Add Subscriber"><svg class="icon"><use href="#ic-plus"/></svg></button>
+
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1><svg class="icon"><use href="#ic-leaf"/></svg> Kitchen Dashboard</h1>
+      <p id="topbar-date">Loading…</p>
+    </div>
+    <div class="topbar-right">
+      <div class="date-badge" id="live-time">—</div>
+      <button class="btn btn-primary" onclick="openModal('add')">
+        <svg class="icon"><use href="#ic-plus"/></svg> Add Subscriber
+      </button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="view-dashboard" class="view active">
+    <div class="bento">
+
+      <!-- Today's Bowls -->
+      <div class="card col-6" style="background:linear-gradient(135deg,#D8F3DC 0%,#FFFDF9 65%);">
+        <div class="card-label">Today's Bowls</div>
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;">
+          <div style="flex-shrink:0;">
+            <div class="donut-wrap" style="margin-top:6px;">
+              <canvas id="donut-canvas" width="110" height="110"></canvas>
+              <div class="donut-center">
+                <span class="total" id="donut-total">0</span>
+                <span class="lbl">bowls</span>
+              </div>
+            </div>
+            <div style="margin-top:10px;">
+              <div class="legend-row"><span class="legend-dot" style="background:#E76F51"></span><span id="leg-nonveg">0 Non-Veg</span></div>
+              <div class="legend-row"><span class="legend-dot" style="background:#F4A261"></span><span id="leg-egg">0 Egg</span></div>
+              <div class="legend-row"><span class="legend-dot" style="background:#2D6A4F"></span><span id="leg-veg">0 Veg</span></div>
+            </div>
+          </div>
+          <div style="flex:1;min-width:140px;">
+            <div class="card-label" style="margin-bottom:8px;">By Slot</div>
+            <div id="slot-breakdown" class="slot-mini-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Subscribers -->
+      <div class="card col-3" style="background:var(--sky-light);">
+        <div class="blob" style="width:90px;height:90px;background:var(--sky);top:-25px;right:-25px;"></div>
+        <div class="card-label">Total Subscribers</div>
+        <div class="card-value" id="stat-total" style="color:var(--sky)">0</div>
+        <div class="card-sub" id="stat-total-sub">All time</div>
+        <div style="margin-top:12px;">
+          <div class="progress-bar"><div class="progress-fill" id="progress-active" style="background:var(--sky);width:0%"></div></div>
+          <div style="font-size:10px;color:#888;margin-top:5px;font-weight:600;" id="stat-active-label">0 active</div>
+        </div>
+      </div>
+
+      <!-- Active Now -->
+      <div class="card col-3" style="background:var(--green-light);">
+        <div class="blob" style="width:80px;height:80px;background:var(--green-mid);top:-20px;right:-20px;"></div>
+        <div class="card-label">Active Now</div>
+        <div class="card-value" id="stat-active" style="color:var(--green)">0</div>
+        <div class="card-sub">Currently receiving meals</div>
+      </div>
+
+      <!-- Paused -->
+      <div class="card col-3" style="background:var(--rose-light);">
+        <div class="blob" style="width:70px;height:70px;background:var(--rose);top:-18px;right:-18px;"></div>
+        <div class="card-label">Paused / Inactive</div>
+        <div class="card-value" id="stat-paused" style="color:var(--rose)">0</div>
+        <div class="card-sub">Need follow-up</div>
+      </div>
+
+      <!-- Plan Split -->
+      <div class="card col-3" style="background:var(--purple-light);">
+        <div class="card-label" style="color:var(--purple);">Plan Split</div>
+        <div style="display:flex;gap:16px;margin-top:8px;align-items:center;">
+          <div>
+            <div style="font-size:28px;font-weight:900;color:var(--purple);line-height:1;" id="stat-monthly">0</div>
+            <div style="font-size:9.5px;color:#888;font-weight:600;margin-top:3px;">Monthly</div>
+          </div>
+          <div style="width:1px;background:#ddd;height:32px;"></div>
+          <div>
+            <div style="font-size:28px;font-weight:900;color:#9B8EC4;line-height:1;" id="stat-weekly">0</div>
+            <div style="font-size:9.5px;color:#888;font-weight:600;margin-top:3px;">Weekly</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bowl tiles -->
+      <div class="card col-3" style="background:#FDECEA;">
+        <div class="card-label" style="color:#b54030;"><svg class="icon"><use href="#ic-drumstick"/></svg> Non-Veg Today</div>
+        <div class="card-value" id="bowl-nonveg" style="color:var(--rose)">0</div>
+        <div class="card-sub">Chicken-based meals</div>
+      </div>
+      <div class="card col-3" style="background:var(--amber-light);">
+        <div class="card-label" style="color:#b55a1a;"><svg class="icon"><use href="#ic-egg"/></svg> Egg Today</div>
+        <div class="card-value" id="bowl-egg" style="color:var(--amber)">0</div>
+        <div class="card-sub">Egg + Veg meals</div>
+      </div>
+      <div class="card col-3" style="background:var(--green-light);">
+        <div class="card-label" style="color:var(--green);"><svg class="icon"><use href="#ic-broccoli"/></svg> Veg Today</div>
+        <div class="card-value" id="bowl-veg" style="color:var(--green)">0</div>
+        <div class="card-sub">Vegetarian-only meals</div>
+      </div>
+
+      <!-- Upcoming Renewals -->
+      <div class="card col-9">
+        <div class="card-label"><svg class="icon"><use href="#ic-clock"/></svg> Upcoming Renewals <span style="font-weight:500;text-transform:none;font-size:10px;color:#bbb;">— due today or tomorrow</span></div>
+        <div id="renewal-list" style="margin-top:6px;"></div>
+      </div>
+
+      <!-- Recent Subscribers -->
+      <div class="card col-12">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <div class="card-label" style="margin:0;">Recent Subscribers</div>
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+            <div class="search-bar"><svg class="icon search-icon"><use href="#ic-search"/></svg><input id="dash-search" type="text" placeholder="Search…" oninput="renderDashTable()"></div>
+            <button class="btn btn-ghost btn-sm" onclick="showView('subscribers')">View All ›</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Subscriber</th><th>Plan</th><th>Diet</th><th>Locality</th><th>Slots</th><th>Status</th><th>Renewal</th><th>Actions</th></tr></thead>
+            <tbody id="dash-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SUBSCRIBERS -->
+  <div id="view-subscribers" class="view">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+      <div class="view-title" style="margin:0;"><svg class="icon"><use href="#ic-users"/></svg> All Subscribers</div>
+      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+        <div class="search-bar"><svg class="icon search-icon"><use href="#ic-search"/></svg><input id="sub-search" type="text" placeholder="Name, locality…" oninput="renderSubTable()"></div>
+        <span class="filter-chip active" onclick="setFilter(this,'all')">All</span>
+        <span class="filter-chip" onclick="setFilter(this,'active')"><svg class="icon"><use href="#ic-check"/></svg> Active</span>
+        <span class="filter-chip" onclick="setFilter(this,'paused')"><svg class="icon"><use href="#ic-pause"/></svg> Paused</span>
+        <span class="filter-chip" onclick="setFilter(this,'expired')"><svg class="icon"><use href="#ic-x"/></svg> Expired</span>
+        <button class="btn btn-primary btn-sm" onclick="openModal('add')"><svg class="icon"><use href="#ic-plus"/></svg> Add</button>
+      </div>
+    </div>
+    <div class="card" style="padding:14px 16px;">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Subscriber</th><th>Mobile</th><th>Plan</th><th>Bowls</th><th>Diet</th><th>Veg Days</th><th>Locality</th><th>Slots</th><th>Freq</th><th>Start</th><th>Expires</th><th>Status</th><th>Map</th><th>Actions</th></tr></thead>
+          <tbody id="sub-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TODAY'S DELIVERY -->
+  <div id="view-delivery" class="view">
+    <div class="view-title"><svg class="icon"><use href="#ic-bike"/></svg> Today's Delivery Pack</div>
+    <div class="bento">
+      <div class="card col-12">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:6px;">
+          <div class="card-label" style="margin:0;">Full Delivery List — <span id="today-day-label" style="font-weight:600;text-transform:none;font-size:11px;color:#666;"></span></div>
+          <div style="font-size:10px;font-weight:600;color:#aaa;" id="packed-summary-label"></div>
+        </div>
+
+        <!-- Morning Section -->
+        <div class="delivery-section">
+          <div class="delivery-section-header">
+            <svg class="icon section-emoji"><use href="#ic-sunrise"/></svg>
+            <span class="section-title">Morning — 7:30–9:30 AM</span>
+            <span class="section-count" id="morning-count">0</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Address</th><th>Map</th><th>Diet Today</th><th>Bowls</th><th>Notes</th><th>Packed</th></tr></thead>
+              <tbody id="delivery-morning-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Afternoon Section -->
+        <div class="delivery-section">
+          <div class="delivery-section-header">
+            <svg class="icon section-emoji"><use href="#ic-sun"/></svg>
+            <span class="section-title">Afternoon — 12:30–2:00 PM</span>
+            <span class="section-count" id="afternoon-count">0</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Address</th><th>Map</th><th>Diet Today</th><th>Bowls</th><th>Notes</th><th>Packed</th></tr></thead>
+              <tbody id="delivery-afternoon-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Evening Section -->
+        <div class="delivery-section">
+          <div class="delivery-section-header">
+            <svg class="icon section-emoji"><use href="#ic-moon"/></svg>
+            <span class="section-title">Evening — 6:45–9:00 PM</span>
+            <span class="section-count" id="evening-count">0</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Address</th><th>Map</th><th>Diet Today</th><th>Bowls</th><th>Notes</th><th>Packed</th></tr></thead>
+              <tbody id="delivery-evening-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Packed / completed section -->
+        <div class="delivery-packed-section" id="packed-section" style="display:none;">
+          <div class="delivery-packed-header">
+            <svg class="icon"><use href="#ic-check"/></svg>
+            <span class="label-text">Packed & Ready</span>
+            <span class="count-badge" id="packed-count">0</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Diet</th><th>Bowls</th><th>Slot</th></tr></thead>
+              <tbody id="packed-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- REMINDERS -->
+  <div id="view-reminders" class="view">
+    <div class="view-title"><svg class="icon"><use href="#ic-bell"/></svg> Subscription Reminders</div>
+    <div class="bento">
+      <div class="card col-6">
+        <div class="card-label"><svg class="icon"><use href="#ic-clock"/></svg> Expiring / Renewing Soon</div>
+        <div id="reminder-list-full" style="margin-top:6px;"></div>
+      </div>
+      <div class="card col-6">
+        <div class="card-label"><svg class="icon"><use href="#ic-pause"/></svg> Paused — Follow Up</div>
+        <div id="paused-list" style="margin-top:6px;"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ══ MODALS ══ -->
+
+<!-- Add / Edit Subscriber -->
+<div class="modal-overlay" id="modal-add">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-add-title"><svg class="icon"><use href="#ic-plus"/></svg> Add New Subscriber</h2>
+      <button class="modal-close" onclick="closeModal('add')"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <span class="section-label"><svg class="icon"><use href="#ic-user"/></svg> Personal Details</span>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Full Name *</label><input id="f-name" class="form-input" placeholder="e.g. Anjali Rao" required></div>
+        <div class="form-group"><label class="form-label">Mobile *</label><input id="f-mobile" class="form-input" type="tel" placeholder="98xxxxxxxx" required></div>
+      </div>
+
+      <span class="section-label"><svg class="icon"><use href="#ic-list"/></svg> Plan Details</span>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Bowls per Day *</label>
+          <select id="f-bowls" class="form-input form-select" onchange="onBowlsChange()" required>
+            <option value="1">1 Bowl / Day</option>
+            <option value="2" selected>2 Bowls / Day</option>
+            <option value="3">3 Bowls / Day</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Frequency *</label>
+          <select id="f-freq" class="form-input form-select" required>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Start Date *</label><input id="f-start" class="form-input" type="date" required></div>
+        <div class="form-group">
+          <label class="form-label">Status *</label>
+          <select id="f-status" class="form-input form-select" onchange="onStatusChange()" required>
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="expired">Expired</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="pause-dates-section" style="display:none;">
+        <div class="pause-dates">
+          <div class="form-group" style="margin:0;"><label class="form-label">Paused From *</label><input id="f-pause-from" class="form-input" type="date"></div>
+          <div class="form-group" style="margin:0;"><label class="form-label">Paused Until *</label><input id="f-pause-until" class="form-input" type="date"></div>
+        </div>
+        <p style="font-size:10px;color:#b55a1a;font-weight:600;margin-top:6px;">Delivery won't resume until the 'until' date.</p>
+      </div>
+
+      <span class="section-label" style="margin-top:14px;"><svg class="icon"><use href="#ic-broccoli"/></svg> Diet Preference *</span>
+      <div class="diet-cards" id="diet-cards">
+        <div class="diet-card selected" data-diet="nonveg" onclick="selectDietCard(this)">
+          <svg class="icon"><use href="#ic-drumstick"/></svg><div class="name">Chicken + Egg + Veg</div><div class="desc">All proteins</div>
+        </div>
+        <div class="diet-card" data-diet="egg" onclick="selectDietCard(this)">
+          <svg class="icon"><use href="#ic-egg"/></svg><div class="name">Egg + Veg</div><div class="desc">No chicken</div>
+        </div>
+        <div class="diet-card" data-diet="veg" onclick="selectDietCard(this)">
+          <svg class="icon"><use href="#ic-broccoli"/></svg><div class="name">Veg Only</div><div class="desc">100% vegetarian</div>
+        </div>
+      </div>
+      <input type="hidden" id="f-diet" value="nonveg">
+
+      <div id="veg-days-section" style="margin-top:14px;">
+        <label class="form-label">Veg-Only Days <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+        <div class="day-chips" id="f-veg-day-chips">
+          <span class="day-chip" data-day="Mon" onclick="toggleDayChip(this)">Mon</span>
+          <span class="day-chip" data-day="Tue" onclick="toggleDayChip(this)">Tue</span>
+          <span class="day-chip" data-day="Wed" onclick="toggleDayChip(this)">Wed</span>
+          <span class="day-chip" data-day="Thu" onclick="toggleDayChip(this)">Thu</span>
+          <span class="day-chip" data-day="Fri" onclick="toggleDayChip(this)">Fri</span>
+          <span class="day-chip" data-day="Sat" onclick="toggleDayChip(this)">Sat</span>
+        </div>
+      </div>
+
+      <span class="section-label" style="margin-top:16px;"><svg class="icon"><use href="#ic-clock"/></svg> Delivery Slots *</span>
+      <p id="slot-hint" style="font-size:10.5px;color:var(--green);font-weight:700;margin-bottom:8px;"></p>
+      <div id="slot-checkboxes" style="display:flex;flex-direction:column;gap:7px;"></div>
+
+      <span class="section-label" style="margin-top:16px;"><svg class="icon"><use href="#ic-pin"/></svg> Location</span>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Locality *</label>
+          <select id="f-locality" class="form-input form-select" onchange="onLocalityChange()" required>
+            <option value="">Select locality…</option>
+            <option>Bannimantap</option>
+            <option>Bogadi</option>
+            <option>Chamrajpura</option>
+            <option>Dattagalli</option>
+            <option>Devaraja Mohalla</option>
+            <option>Gokulam</option>
+            <option>Hebbal</option>
+            <option>Hootagalli</option>
+            <option>J.P. Nagar</option>
+            <option>Jayalakshmipuram</option>
+            <option>Kesare</option>
+            <option>Kumbarpet</option>
+            <option>Kuvempunagar</option>
+            <option>Lakshmipuram</option>
+            <option>Mandi Mohalla</option>
+            <option>Metagalli</option>
+            <option>N.R. Mohalla</option>
+            <option>Nazarbad</option>
+            <option>Ramakrishnanagar</option>
+            <option>Saraswathipuram</option>
+            <option>Srirampura</option>
+            <option>T.K. Layout</option>
+            <option>Vijayanagar</option>
+            <option>Yadavagiri</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group" id="other-locality-wrap" style="display:none;">
+          <label class="form-label">Other Locality *</label>
+          <input id="f-locality-other" class="form-input" placeholder="Type locality…">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full Delivery Address *</label>
+        <input id="f-address" class="form-input" placeholder="Door no., street, landmark…" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Google Maps Link <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+        <div class="map-input-wrap">
+          <svg class="icon map-icon"><use href="#ic-pin"/></svg>
+          <input id="f-maplink" class="form-input" type="url" placeholder="https://maps.google.com/…">
+        </div>
+      </div>
+
+      <span class="section-label" style="margin-top:4px;"><svg class="icon"><use href="#ic-note"/></svg> Notes & Preferences</span>
+      <div class="form-group">
+        <label class="form-label">Allergies / Special Instructions <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+        <textarea id="f-notes" class="form-input" rows="2" placeholder="e.g. No peanuts, mild spice only" style="resize:vertical;"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('add')">Cancel</button>
+      <button class="btn btn-primary" id="save-btn" onclick="saveSubscriber()">
+        <svg class="icon"><use href="#ic-check"/></svg> Save Subscriber
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Change Diet Modal -->
+<div class="modal-overlay" id="modal-diet">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <h2><svg class="icon"><use href="#ic-broccoli"/></svg> Change Diet</h2>
+      <button class="modal-close" onclick="closeModal('diet')"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:#666;margin-bottom:14px;">Updating diet for <strong id="diet-change-name" style="color:#1a1a1a;"></strong></p>
+      <div class="diet-cards" id="diet-edit-cards">
+        <div class="diet-card" data-diet="nonveg" onclick="selectDietEditCard(this)"><svg class="icon"><use href="#ic-drumstick"/></svg><div class="name">Chicken + Egg + Veg</div></div>
+        <div class="diet-card" data-diet="egg" onclick="selectDietEditCard(this)"><svg class="icon"><use href="#ic-egg"/></svg><div class="name">Egg + Veg</div></div>
+        <div class="diet-card" data-diet="veg" onclick="selectDietEditCard(this)"><svg class="icon"><use href="#ic-broccoli"/></svg><div class="name">Veg Only</div></div>
+      </div>
+      <div id="diet-edit-vegdays" style="margin-top:14px;">
+        <label class="form-label">Veg-Only Days (optional)</label>
+        <div class="day-chips" id="diet-edit-chips">
+          <span class="day-chip" data-day="Mon" onclick="toggleDietEditChip(this)">Mon</span>
+          <span class="day-chip" data-day="Tue" onclick="toggleDietEditChip(this)">Tue</span>
+          <span class="day-chip" data-day="Wed" onclick="toggleDietEditChip(this)">Wed</span>
+          <span class="day-chip" data-day="Thu" onclick="toggleDietEditChip(this)">Thu</span>
+          <span class="day-chip" data-day="Fri" onclick="toggleDietEditChip(this)">Fri</span>
+          <span class="day-chip" data-day="Sat" onclick="toggleDietEditChip(this)">Sat</span>
+        </div>
+      </div>
+      <input type="hidden" id="diet-edit-value" value="nonveg">
+      <input type="hidden" id="diet-edit-id" value="">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('diet')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveDietChange()"><svg class="icon"><use href="#ic-check"/></svg> Update Diet</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Subscriber Modal -->
+<div class="modal-overlay" id="modal-view">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <h2><svg class="icon"><use href="#ic-user"/></svg> Subscriber Details</h2>
+      <button class="modal-close" onclick="closeModal('view')"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body" id="modal-view-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('view')">Close</button>
+      <button class="btn btn-primary" id="modal-edit-btn"><svg class="icon"><use href="#ic-edit"/></svg> Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pause Modal -->
+<div class="modal-overlay" id="modal-pause">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-header">
+      <h2><svg class="icon"><use href="#ic-pause"/></svg> Pause Subscription</h2>
+      <button class="modal-close" onclick="closeModal('pause')"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:#666;margin-bottom:14px;">Pausing subscription for <strong id="pause-sub-name" style="color:#1a1a1a;"></strong></p>
+      <div class="pause-dates">
+        <div class="form-group" style="margin:0;"><label class="form-label">Paused From *</label><input id="pause-from" class="form-input" type="date"></div>
+        <div class="form-group" style="margin:0;"><label class="form-label">Paused Until *</label><input id="pause-until" class="form-input" type="date"></div>
+      </div>
+      <p style="font-size:10px;color:#b55a1a;font-weight:600;margin-top:8px;">Delivery resumes automatically after the 'until' date. Expiry will be extended by paused days.</p>
+      <input type="hidden" id="pause-doc-id" value="">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('pause')">Cancel</button>
+      <button class="btn btn-primary" style="background:var(--amber);" onclick="confirmPause()"><svg class="icon"><use href="#ic-pause"/></svg> Confirm Pause</button>
+    </div>
+  </div>
+</div>
+
+<!-- Renewal Payment Modal -->
+<div class="modal-overlay" id="modal-renewal">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <h2><svg class="icon"><use href="#ic-refresh"/></svg> Confirm Renewal</h2>
+      <button class="modal-close" onclick="closeModal('renewal')"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:#666;margin-bottom:16px;">
+        Renewing subscription for <strong id="renewal-sub-name" style="color:#1a1a1a;"></strong>
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">New Cycle Start Date *</label>
+        <input id="renewal-start-date" class="form-input" type="date" oninput="updateRenewalExpiry()">
+        <p id="renewal-expiry-preview" style="font-size:10.5px;color:var(--green);font-weight:600;margin-top:5px;"></p>
+      </div>
+
+      <label class="form-label" style="margin-bottom:10px;">How was payment received? *</label>
+      <div id="payment-options">
+        <div class="payment-option" data-mode="cash" onclick="selectPaymentMode(this)">
+          <div class="po-icon" style="background:#D8F3DC;color:var(--green);"><svg class="icon"><use href="#ic-cash"/></svg></div>
+          <div>
+            <div class="po-label">Cash</div>
+            <div class="po-desc">Payment received in hand</div>
+          </div>
+        </div>
+        <div class="payment-option" data-mode="online" onclick="selectPaymentMode(this)">
+          <div class="po-icon" style="background:#EDE9F8;color:var(--purple);"><svg class="icon"><use href="#ic-upi"/></svg></div>
+          <div>
+            <div class="po-label">Online Transfer</div>
+            <div class="po-desc">UPI, NEFT, IMPS, or bank transfer</div>
+          </div>
+        </div>
+      </div>
+      <div id="utr-section" style="display:none;margin-top:14px;">
+        <div class="form-group">
+          <label class="form-label">UTR / Transaction Reference *</label>
+          <input id="renewal-utr" class="form-input" placeholder="e.g. 423789654321" maxlength="24">
+          <p style="font-size:10px;color:#aaa;margin-top:4px;font-weight:500;">Found in your UPI app or bank statement</p>
+        </div>
+      </div>
+      <input type="hidden" id="renewal-doc-id" value="">
+      <input type="hidden" id="renewal-payment-mode" value="">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('renewal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmRenewal()"><svg class="icon"><use href="#ic-refresh"/></svg> Mark Renewed</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg class="icon" id="toast-icon"><use href="#ic-check"/></svg>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// FIREBASE INIT
+// ══════════════════════════════════════════════════════
+var firebaseConfig = {
+  apiKey:            "AIzaSyBCfplRUbK2EowU9HA3vek1khXh6J60WHw",
+  authDomain:        "lightweight-16a64.firebaseapp.com",
+  projectId:         "lightweight-16a64",
+  storageBucket:     "lightweight-16a64.firebasestorage.app",
+  messagingSenderId: "835783995408",
+  appId:             "1:835783995408:web:9dbe1bc3cf6ed2eb295a95",
+  measurementId:     "G-0SWQH7PMRP"
+};
+firebase.initializeApp(firebaseConfig);
+var db   = firebase.firestore();
+var COLL = db.collection('subscribers');
+
+// ══════════════════════════════
+// CONSTANTS
+// ══════════════════════════════
+var SLOTS       = ['7:30 AM – 9:30 AM','12:30 PM – 2:00 PM','6:45 PM – 9:00 PM'];
+var SLOT_LABELS = ['Morning (7:30–9:30 AM)', 'Afternoon (12:30–2:00 PM)', 'Evening (6:45–9:00 PM)'];
+var SLOT_NAMES  = ['Morning','Afternoon','Evening'];
+var DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var DIET_LABEL  = { nonveg:'Chicken + Egg + Veg', egg:'Egg + Veg', veg:'Veg Only' };
+var DIET_ICON   = { nonveg:'ic-drumstick', egg:'ic-egg', veg:'ic-broccoli' };
+var PLAN_PRICE_WEEKLY  = { 1:1305, 2:2610, 3:3915 };
+var PLAN_PRICE_MONTHLY = { 1:4500, 2:9000, 3:13500 };
+
+// Delivery days per cycle (excluding Sunday)
+var WEEKLY_DELIVERY_DAYS  = 6;   // Mon–Sat
+var MONTHLY_DELIVERY_DAYS = 26;  // ~4.3 weeks × 6 days
+
+// ══════════════════════════════
+// STATE
+// ══════════════════════════════
+var subscribers  = [];
+var editingDocId = null;
+var activeFilter = 'all';
+// packedIds is now keyed per-slot: "subId|slotIndex" so packing morning
+// doesn't also mark afternoon/evening for the same subscriber.
+var packedSlotKeys = new Set();
+
+// ══════════════════════════════
+// FIRESTORE LISTENER
+// ══════════════════════════════
+COLL.orderBy('name').onSnapshot(function(snap) {
+  subscribers = snap.docs.map(function(doc) {
+    var d = doc.data(); d.id = doc.id; return d;
+  });
+  document.getElementById('fb-loading').style.display = 'none';
+  var active = document.querySelector('.view.active');
+  if (active) {
+    var vid = active.id.replace('view-','');
+    if (vid === 'dashboard')   renderDashboard();
+    if (vid === 'subscribers') renderSubTable();
+    if (vid === 'delivery')    renderDelivery();
+    if (vid === 'reminders')   renderReminders();
+  }
+}, function(err) {
+  document.getElementById('fb-loading').innerHTML =
+    '<svg class="icon" style="width:28px;height:28px;color:#E76F51;"><use href="#ic-warn"/></svg>' +
+    '<p style="color:#E76F51;font-weight:700;">Could not connect.<br>Check your internet connection.</p>';
+  console.error('Firestore error:', err);
+});
+
+// ══════════════════════════════
+// FIRESTORE HELPERS
+// ══════════════════════════════
+function fsAdd(obj) {
+  var data = Object.assign({}, obj);
+  delete data.id;
+  data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+  data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+  return COLL.add(data);
+}
+function fsUpdate(docId, fields) {
+  fields.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+  return COLL.doc(docId).update(fields);
+}
+function fsDelete(docId) { return COLL.doc(docId).delete(); }
+
+// ══════════════════════════════
+// EXPIRY CALCULATION
+// Counts only Mon–Sat (6 delivery days per week)
+// Weekly = 6 delivery days from start
+// Monthly = 26 delivery days from start
+// Pauses extend the expiry by the number of paused calendar days
+// ══════════════════════════════
+function computeExpiryDate(startDateStr, freq, pauseFrom, pauseUntil) {
+  var start = new Date(startDateStr);
+  start.setHours(0,0,0,0);
+  var deliveryDaysNeeded = freq === 'monthly' ? MONTHLY_DELIVERY_DAYS : WEEKLY_DELIVERY_DAYS;
+  var current = new Date(start);
+  var deliveryDaysCount = 0;
+  // Count forward until we've hit required delivery days (Mon–Sat only)
+  while (deliveryDaysCount < deliveryDaysNeeded) {
+    current.setDate(current.getDate() + 1);
+    var dow = current.getDay(); // 0=Sun, 6=Sat
+    if (dow !== 0) deliveryDaysCount++; // not Sunday
+  }
+  // Extend by paused days if applicable
+  if (pauseFrom && pauseUntil) {
+    var pf = new Date(pauseFrom); pf.setHours(0,0,0,0);
+    var pu = new Date(pauseUntil); pu.setHours(0,0,0,0);
+    if (pu > pf) {
+      var pausedDays = Math.round((pu - pf) / 86400000);
+      current.setDate(current.getDate() + pausedDays);
+    }
+  }
+  return current;
+}
+
+function getExpiryForSub(sub) {
+  if (!sub.start) return null;
+  // If expiryDate is stored explicitly (after renewal), use it
+  if (sub.expiryDate) return new Date(sub.expiryDate);
+  return computeExpiryDate(sub.start, sub.freq, sub.pauseFrom, sub.pauseUntil);
+}
+
+function computeRenewal(sub) {
+  var expiry = getExpiryForSub(sub);
+  if (!expiry) { sub._renewalDate = null; sub._daysUntilRenewal = 999; return 999; }
+  var today = new Date(); today.setHours(0,0,0,0);
+  sub._renewalDate      = expiry;
+  sub._daysUntilRenewal = Math.round((expiry - today) / 86400000);
+  return sub._daysUntilRenewal;
+}
+
+function expiryDateStr(sub) {
+  computeRenewal(sub);
+  return sub._renewalDate ? fmtDate(sub._renewalDate) : '—';
+}
+
+// ══════════════════════════════
+// ROUTING
+// ══════════════════════════════
+function showView(v) {
+  document.querySelectorAll('.view').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('view-' + v).classList.add('active');
+  var navItems  = document.querySelectorAll('.sidebar .nav-item');
+  var bnavItems = document.querySelectorAll('.bnav-item');
+  var map = { dashboard:0, subscribers:1, delivery:2, reminders:3 };
+  navItems.forEach(function(el){ el.classList.remove('active'); });
+  bnavItems.forEach(function(el){ el.classList.remove('active'); });
+  if (map[v] !== undefined) {
+    if (navItems[map[v]])  navItems[map[v]].classList.add('active');
+    if (bnavItems[map[v]]) bnavItems[map[v]].classList.add('active');
+  }
+  if (v === 'dashboard')   renderDashboard();
+  if (v === 'subscribers') renderSubTable();
+  if (v === 'delivery')    renderDelivery();
+  if (v === 'reminders')   renderReminders();
+}
+
+// ══════════════════════════════
+// HELPERS
+// ══════════════════════════════
+function getTodayDiet(sub) {
+  if (sub.status !== 'active') return null;
+  var dayName = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
+  if (sub.vegDays && sub.vegDays.indexOf(dayName) !== -1) return 'veg';
+  return sub.diet;
+}
+function dietBg(diet) {
+  return diet === 'nonveg' ? '#FDECEA' : diet === 'egg' ? '#FFF0E0' : '#D8F3DC';
+}
+function dietColor(diet) {
+  return diet === 'nonveg' ? 'var(--rose)' : diet === 'egg' ? 'var(--amber)' : 'var(--green)';
+}
+function dietIconSvg(diet, extraStyle) {
+  return '<svg class="icon" style="color:'+dietColor(diet)+';'+(extraStyle||'')+'"><use href="#'+DIET_ICON[diet]+'"/></svg>';
+}
+function statusPill(status, pauseFrom, pauseUntil) {
+  if (status === 'paused' && pauseFrom && pauseUntil) {
+    return '<span class="pill pill-amber" title="' + pauseFrom + ' → ' + pauseUntil + '"><svg class="icon"><use href="#ic-pause"/></svg> paused</span>';
+  }
+  var cls  = status === 'active' ? 'pill-green' : status === 'paused' ? 'pill-amber' : 'pill-rose';
+  var icon = status === 'active' ? 'ic-check' : status === 'paused' ? 'ic-pause' : 'ic-x';
+  return '<span class="pill ' + cls + '"><svg class="icon"><use href="#'+icon+'"/></svg> ' + status + '</span>';
+}
+function dietPill(diet) {
+  var cls = diet === 'nonveg' ? 'pill-rose' : diet === 'egg' ? 'pill-amber' : 'pill-green';
+  return '<span class="pill ' + cls + '"><svg class="icon"><use href="#'+DIET_ICON[diet]+'"/></svg> ' + DIET_LABEL[diet] + '</span>';
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  var dateObj = (d instanceof Date) ? d : new Date(d);
+  if (isNaN(dateObj.getTime())) return '—';
+  return dateObj.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+}
+function renewalStr(sub) {
+  var diff = computeRenewal(sub);
+  if (diff <= 0) return '<span style="color:#b54030;font-weight:700;">Today</span>';
+  if (diff === 1) return '<span style="color:#b55a1a;font-weight:700;">Tomorrow</span>';
+  return 'In ' + diff + 'd';
+}
+function waUrl(mobile, msg) {
+  var num = mobile.replace(/\D/g,'');
+  if (num.length === 10) num = '91' + num;
+  return 'https://wa.me/' + num + '?text=' + encodeURIComponent(msg);
+}
+function callUrl(mobile) {
+  return 'tel:+91' + mobile.replace(/\D/g,'').replace(/^91/,'');
+}
+function buildWaRenewalMsg(sub) {
+  computeRenewal(sub);
+  var price     = sub.freq === 'monthly' ? PLAN_PRICE_MONTHLY[sub.bowls] : PLAN_PRICE_WEEKLY[sub.bowls];
+  var firstName = sub.name.split(' ')[0];
+  var expiry    = sub._renewalDate ? fmtDate(sub._renewalDate) : '—';
+  var planLabel = sub.bowls + ' Bowl/Day (' + (sub.freq === 'monthly' ? 'Monthly' : 'Weekly') + ')';
+  return 'Hi ' + firstName + ' 👋,\n\n'
+    + 'This is a reminder from Lightweight Kitchen that your meal subscription is up for renewal.\n\n'
+    + '📋 Plan: ' + planLabel + '\n'
+    + '🗓️ Subscribed Since: ' + fmtDate(sub.start) + '\n'
+    + '⏰ Expires On: ' + expiry + '\n'
+    + '💰 Renewal Amount: ₹' + price.toLocaleString() + '\n\n'
+    + 'Please complete the payment to continue receiving your meals without interruption. '
+    + 'Once paid, just reply here and we will reactivate your plan right away.\n\n'
+    + 'Thank you for choosing Lightweight Kitchen! 🥗';
+}
+
+// ══════════════════════════════
+// BOWL-PER-SLOT ALLOCATION
+// Splits a subscriber's total daily bowls evenly across their chosen
+// slots, so a 2-bowl/2-slot subscriber shows 1 bowl per slot (not 2+2),
+// and a 3-bowl/2-slot subscriber shows 2+1 (extra bowls go to earlier slots).
+// ══════════════════════════════
+function bowlsForSlot(sub, slotIdx) {
+  var slots = sub.slots || [];
+  var n = slots.length;
+  if (n === 0) return 0;
+  var base  = Math.floor(sub.bowls / n);
+  var extra = sub.bowls % n;
+  // Find this slot's position among the subscriber's own chosen slots,
+  // ordered the same way SLOTS is ordered (Morning, Afternoon, Evening).
+  var orderedChosen = SLOTS.map(function(s, i){ return i; }).filter(function(i){ return slots.indexOf(SLOTS[i]) !== -1; });
+  var pos = orderedChosen.indexOf(slotIdx);
+  if (pos === -1) return 0;
+  return base + (pos < extra ? 1 : 0);
+}
+
+// ══════════════════════════════
+// STATS
+// ══════════════════════════════
+function computeStats() {
+  var total   = subscribers.length;
+  var active  = subscribers.filter(function(s){ return s.status === 'active'; }).length;
+  var paused  = subscribers.filter(function(s){ return s.status !== 'active'; }).length;
+  var monthly = subscribers.filter(function(s){ return s.freq === 'monthly'; }).length;
+  var weekly  = subscribers.filter(function(s){ return s.freq === 'weekly'; }).length;
+  var bowlNonveg=0, bowlEgg=0, bowlVeg=0;
+  var slotData = [{nonveg:0,egg:0,veg:0},{nonveg:0,egg:0,veg:0},{nonveg:0,egg:0,veg:0}];
+  subscribers.forEach(function(s){
+    if (s.status !== 'active') return;
+    var diet = getTodayDiet(s);
+    (s.slots||[]).forEach(function(slot){
+      var si = SLOTS.indexOf(slot);
+      if (si < 0) return;
+      var b = bowlsForSlot(s, si);
+      if (diet === 'nonveg') { slotData[si].nonveg += b; bowlNonveg += b; }
+      else if (diet === 'egg') { slotData[si].egg += b; bowlEgg += b; }
+      else { slotData[si].veg += b; bowlVeg += b; }
+    });
+  });
+  return { total, active, paused, monthly, weekly, bowlNonveg, bowlEgg, bowlVeg, slotData };
+}
+
+// ══════════════════════════════
+// DASHBOARD
+// ══════════════════════════════
+function renderDashboard() {
+  var s = computeStats();
+  document.getElementById('stat-total').textContent   = s.total;
+  document.getElementById('stat-active').textContent  = s.active;
+  document.getElementById('stat-paused').textContent  = s.paused;
+  document.getElementById('stat-monthly').textContent = s.monthly;
+  document.getElementById('stat-weekly').textContent  = s.weekly;
+  document.getElementById('bowl-nonveg').textContent  = s.bowlNonveg;
+  document.getElementById('bowl-egg').textContent     = s.bowlEgg;
+  document.getElementById('bowl-veg').textContent     = s.bowlVeg;
+  document.getElementById('stat-total-sub').textContent   = s.total + ' subscribers total';
+  document.getElementById('stat-active-label').textContent = s.active + ' active';
+  var pct = s.total ? Math.round(s.active / s.total * 100) : 0;
+  document.getElementById('progress-active').style.width = pct + '%';
+  var totalBowls = s.bowlNonveg + s.bowlEgg + s.bowlVeg;
+  document.getElementById('donut-total').textContent = totalBowls;
+  document.getElementById('leg-nonveg').textContent  = s.bowlNonveg + ' Non-Veg';
+  document.getElementById('leg-egg').textContent     = s.bowlEgg + ' Egg';
+  document.getElementById('leg-veg').textContent     = s.bowlVeg + ' Veg';
+  drawDonut(s.bowlNonveg, s.bowlEgg, s.bowlVeg, totalBowls);
+  var slotIconIds = ['ic-sunrise','ic-sun','ic-moon'];
+  var slotHtml = s.slotData.map(function(sd, i){
+    var t = sd.nonveg + sd.egg + sd.veg;
+    return '<div class="slot-mini">'
+      + '<div class="slot-mini-title"><svg class="icon"><use href="#'+slotIconIds[i]+'"/></svg> ' + ['Morning','Afternoon','Evening'][i] + '</div>'
+      + (sd.nonveg ? '<div class="slot-diet-row"><span class="label"><svg class="icon"><use href="#ic-drumstick"/></svg> Non-Veg</span><span class="count">' + sd.nonveg + '</span></div>' : '')
+      + (sd.egg    ? '<div class="slot-diet-row"><span class="label"><svg class="icon"><use href="#ic-egg"/></svg> Egg</span><span class="count">'     + sd.egg    + '</span></div>' : '')
+      + (sd.veg    ? '<div class="slot-diet-row"><span class="label"><svg class="icon"><use href="#ic-broccoli"/></svg> Veg</span><span class="count">'     + sd.veg    + '</span></div>' : '')
+      + (!t ? '<div style="font-size:10px;color:#ccc;font-weight:500;">No deliveries</div>' : '')
+      + '</div>';
+  }).join('');
+  document.getElementById('slot-breakdown').innerHTML = slotHtml;
+  renderRenewalList();
+  renderDashTable();
+}
+
+function drawDonut(nv, eg, vg, total) {
+  var canvas = document.getElementById('donut-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var cx=55, cy=55, r=44, inner=28;
+  ctx.clearRect(0,0,110,110);
+  if (!total) {
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle='#EEE'; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx,cy,inner,0,Math.PI*2); ctx.fillStyle='#FFFDF9'; ctx.fill();
+    return;
+  }
+  var segments = [{val:nv,color:'#E76F51'},{val:eg,color:'#F4A261'},{val:vg,color:'#2D6A4F'}];
+  var startAngle = -Math.PI / 2;
+  segments.forEach(function(seg){
+    if (!seg.val) return;
+    var sweep = (seg.val / total) * Math.PI * 2;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,startAngle,startAngle+sweep); ctx.closePath();
+    ctx.fillStyle = seg.color; ctx.fill();
+    startAngle += sweep;
+  });
+  ctx.beginPath(); ctx.arc(cx,cy,inner,0,Math.PI*2); ctx.fillStyle='#FFFDF9'; ctx.fill();
+}
+
+function renderRenewalList() {
+  var upcoming = subscribers.filter(function(s){
+    if (s.status !== 'active') return false;
+    return computeRenewal(s) <= 1;
+  }).sort(function(a,b){ return a._renewalDate - b._renewalDate; });
+  var el = document.getElementById('renewal-list');
+  if (!upcoming.length) {
+    el.innerHTML = '<p style="color:#bbb;font-size:11px;padding:6px 0;">No renewals due today or tomorrow</p>';
+    return;
+  }
+  el.innerHTML = upcoming.map(function(s){
+    var diff    = s._daysUntilRenewal;
+    var urgency = diff <= 0 ? 'urgency-today' : 'urgency-soon';
+    var label   = diff <= 0 ? 'Today' : 'Tomorrow';
+    return '<div class="reminder-item">'
+      + '<div class="reminder-icon" style="background:' + dietBg(s.diet) + '">' + dietIconSvg(s.diet) + '</div>'
+      + '<div class="reminder-text"><strong>' + s.name + '</strong><span>' + s.bowls + ' bowl · ' + s.freq + ' · ' + s.locality + '</span></div>'
+      + '<span class="reminder-urgency ' + urgency + '">' + label + '</span>'
+      + '<div class="reminder-actions">'
+      + '<a href="'+waUrl(s.mobile,buildWaRenewalMsg(s))+'" target="_blank" class="action-btn" title="Send WhatsApp Reminder" style="text-decoration:none;color:#25D366;"><svg class="icon"><use href="#ic-whatsapp"/></svg></a>'
+      + '<button class="action-btn" onclick="openRenewalModal(\'' + s.id + '\')" title="Mark Renewed"><svg class="icon"><use href="#ic-refresh"/></svg></button>'
+      + '</div></div>';
+  }).join('');
+}
+
+function renderDashTable() {
+  var search = (document.getElementById('dash-search').value || '').toLowerCase();
+  var list   = subscribers.filter(function(s){
+    return !search || s.name.toLowerCase().includes(search) || (s.locality||'').toLowerCase().includes(search);
+  }).slice(0, 8);
+  renderTableRows('dash-table-body', list, false);
+}
+
+// ══════════════════════════════
+// SUBSCRIBERS TABLE
+// ══════════════════════════════
+function renderSubTable() {
+  var search = (document.getElementById('sub-search').value || '').toLowerCase();
+  var list   = subscribers.filter(function(s){
+    var mf = activeFilter === 'all' || s.status === activeFilter;
+    var ms = !search
+      || s.name.toLowerCase().includes(search)
+      || (s.locality||'').toLowerCase().includes(search)
+      || (s.mobile||'').includes(search);
+    return mf && ms;
+  });
+  renderTableRows('sub-table-body', list, true);
+}
+
+function renderTableRows(tbodyId, list, full) {
+  var tbody  = document.getElementById(tbodyId);
+  var colors = ['#E76F51','#2D6A4F','#F4A261','#9B8EC4','#4DA8C2'];
+  if (!list.length) {
+    var cols = full ? 14 : 8;
+    tbody.innerHTML = '<tr><td colspan="'+cols+'" style="text-align:center;color:#bbb;padding:20px;font-size:11px;">No subscribers found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(function(s, i){
+    var initials = s.name.split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+    var color    = colors[i % colors.length];
+    var vegDayStr = s.vegDays && s.vegDays.length ? s.vegDays.join(', ') : '—';
+    var mapBtn   = s.mapLink
+      ? '<a href="'+s.mapLink+'" target="_blank" class="action-btn" title="Open Map" style="text-decoration:none;color:var(--sky);"><svg class="icon"><use href="#ic-pin"/></svg></a>'
+      : '<span style="color:#ddd;font-size:10px;padding:0 4px;">—</span>';
+    var docId = s.id;
+    var actions = '<div class="actions-row">'
+      + '<button class="action-btn" onclick="viewSubscriber(\'' + docId + '\')" title="View"><svg class="icon"><use href="#ic-eye"/></svg></button>'
+      + '<button class="action-btn" onclick="editSubscriber(\'' + docId + '\')" title="Edit"><svg class="icon"><use href="#ic-edit"/></svg></button>'
+      + '<button class="action-btn" onclick="changeDiet(\'' + docId + '\')" title="Change Diet"><svg class="icon"><use href="#ic-broccoli"/></svg></button>'
+      + '<button class="action-btn" onclick="promptPause(\'' + docId + '\')" title="Pause / Resume"><svg class="icon"><use href="#ic-pause"/></svg></button>'
+      + '<button class="action-btn" onclick="deleteSubscriber(\'' + docId + '\')" title="Delete"><svg class="icon"><use href="#ic-trash"/></svg></button>'
+      + '</div>';
+    var slotsHtml = (s.slots||[]).map(function(sl){
+      var idx = SLOTS.indexOf(sl);
+      return '<span style="display:block;white-space:nowrap;font-size:10px;color:#888;">' + (idx >= 0 ? SLOT_NAMES[idx] : sl) + '</span>';
+    }).join('');
+    if (full) {
+      return '<tr>'
+        + '<td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar" style="background:'+color+'">'+initials+'</div><div><div style="font-weight:700;font-size:11.5px;line-height:1.3;">'+s.name+'</div></div></div></td>'
+        + '<td style="font-size:11px;color:#666;">'+s.mobile+'</td>'
+        + '<td><span class="pill pill-purple">'+s.bowls+' Bowl/Day</span></td>'
+        + '<td style="font-weight:800;text-align:center;color:#1a1a1a;">'+s.bowls+'</td>'
+        + '<td>'+dietPill(s.diet)+'</td>'
+        + '<td style="font-size:10.5px;color:#888;">'+vegDayStr+'</td>'
+        + '<td style="font-size:11px;color:#444;font-weight:500;">'+s.locality+'</td>'
+        + '<td>'+slotsHtml+'</td>'
+        + '<td><span class="pill pill-sky">'+s.freq+'</span></td>'
+        + '<td style="font-size:10.5px;color:#888;white-space:nowrap;">'+fmtDate(s.start)+'</td>'
+        + '<td style="font-size:10.5px;color:#888;white-space:nowrap;">'+(s.status==='active'?expiryDateStr(s):'—')+'</td>'
+        + '<td>'+statusPill(s.status,s.pauseFrom,s.pauseUntil)+'</td>'
+        + '<td>'+mapBtn+'</td>'
+        + '<td>'+actions+'</td>'
+        + '</tr>';
+    } else {
+      return '<tr>'
+        + '<td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar" style="background:'+color+'">'+initials+'</div><div style="font-weight:700;font-size:11.5px;line-height:1.3;">'+s.name+'</div></div></td>'
+        + '<td><span class="pill pill-purple">'+s.bowls+'B · '+s.freq+'</span></td>'
+        + '<td>'+dietPill(s.diet)+'</td>'
+        + '<td style="font-size:11px;color:#555;font-weight:500;">'+s.locality+'</td>'
+        + '<td>'+slotsHtml+'</td>'
+        + '<td>'+statusPill(s.status,s.pauseFrom,s.pauseUntil)+'</td>'
+        + '<td style="font-size:10.5px;color:#888;white-space:nowrap;">'+(s.status==='active'?expiryDateStr(s):'—')+'</td>'
+        + '<td>'+actions+'</td>'
+        + '</tr>';
+    }
+  }).join('');
+}
+
+function setFilter(el, filter) {
+  document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  activeFilter = filter;
+  renderSubTable();
+}
+
+// ══════════════════════════════
+// DELIVERY VIEW — separated by slot
+// Packed state is now tracked PER SLOT ("subId|slotIdx"), so checking
+// "packed" in the morning table no longer marks the same subscriber's
+// afternoon/evening rows as packed. Each slot row also shows only that
+// slot's share of bowls (via bowlsForSlot), not the subscriber's full
+// daily bowl count.
+// ══════════════════════════════
+function packedKey(subId, slotIdx) { return subId + '|' + slotIdx; }
+
+function renderDelivery() {
+  var today   = new Date();
+  var dayName = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][today.getDay()];
+  document.getElementById('today-day-label').textContent =
+    DAY_NAMES[today.getDay()] + ' · ' + today.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+
+  var active = subscribers.filter(function(s){ return s.status === 'active'; });
+
+  // Group by slot
+  var slotSubscribers = [[], [], []];
+  active.forEach(function(s){
+    (s.slots||[]).forEach(function(slot){
+      var idx = SLOTS.indexOf(slot);
+      if (idx >= 0 && slotSubscribers[idx].indexOf(s) === -1) slotSubscribers[idx].push(s);
+    });
+  });
+
+  var slotBodyIds  = ['delivery-morning-body', 'delivery-afternoon-body', 'delivery-evening-body'];
+  var slotCountIds = ['morning-count', 'afternoon-count', 'evening-count'];
+
+  var packedEntries = []; // {sub, slotIdx, bowls} for the aggregated "Packed & Ready" section
+
+  slotBodyIds.forEach(function(bodyId, i){
+    var subs = slotSubscribers[i];
+    document.getElementById(slotCountIds[i]).textContent = subs.length + ' deliveries';
+    if (!subs.length) {
+      document.getElementById(bodyId).innerHTML =
+        '<tr><td colspan="7" style="text-align:center;color:#ccc;padding:12px;font-size:11px;">No deliveries for this slot</td></tr>';
+      return;
+    }
+    document.getElementById(bodyId).innerHTML = subs.map(function(s){
+      var diet = getTodayDiet(s);
+      var vegNote = s.vegDays && s.vegDays.indexOf(dayName) !== -1
+        ? ' <span class="pill pill-green" style="font-size:8.5px;"><svg class="icon"><use href="#ic-leaf"/></svg> Veg day</span>' : '';
+      var mapBtn = s.mapLink
+        ? '<a href="'+s.mapLink+'" target="_blank" class="action-btn" style="text-decoration:none;color:var(--sky);" title="Open Map"><svg class="icon"><use href="#ic-pin"/></svg></a>'
+        : '—';
+      var key = packedKey(s.id, i);
+      var isPacked = packedSlotKeys.has(key);
+      var slotBowls = bowlsForSlot(s, i);
+      if (isPacked) packedEntries.push({ sub: s, slotIdx: i, bowls: slotBowls });
+      return '<tr' + (isPacked ? ' class="packed-row"' : '') + '>'
+        + '<td style="font-weight:700;font-size:11.5px;">' + s.name + '</td>'
+        + '<td style="font-size:10.5px;color:#666;">' + (s.address||'—') + '</td>'
+        + '<td>' + mapBtn + '</td>'
+        + '<td>' + dietPill(diet) + vegNote + '</td>'
+        + '<td style="font-weight:800;text-align:center;">' + slotBowls + '</td>'
+        + '<td style="font-size:10.5px;color:#aaa;">' + (s.notes||'—') + '</td>'
+        + '<td style="text-align:center;"><input type="checkbox" ' + (isPacked ? 'checked' : '') + ' style="accent-color:var(--green);width:17px;height:17px;cursor:pointer;" onchange="togglePacked(\'' + s.id + '\',' + i + ',this)"></td>'
+        + '</tr>';
+    }).join('');
+  });
+
+  // Packed section (per-slot, not per-subscriber)
+  var packedSection = document.getElementById('packed-section');
+  if (packedEntries.length > 0) {
+    packedSection.style.display = 'block';
+    document.getElementById('packed-count').textContent = packedEntries.length;
+    document.getElementById('packed-table-body').innerHTML = packedEntries.map(function(entry){
+      var s = entry.sub;
+      var diet = getTodayDiet(s);
+      return '<tr class="packed-row">'
+        + '<td style="font-weight:700;font-size:11px;">' + s.name + '</td>'
+        + '<td>' + dietPill(diet) + '</td>'
+        + '<td style="font-weight:700;text-align:center;">' + entry.bowls + '</td>'
+        + '<td style="font-size:10.5px;color:#888;">' + SLOT_NAMES[entry.slotIdx] + '</td>'
+        + '</tr>';
+    }).join('');
+  } else {
+    packedSection.style.display = 'none';
+  }
+
+  // Total deliveries = sum of subscriber x slot pairs (not unique subscribers),
+  // since packing is tracked per slot.
+  var totalSlotDeliveries = slotSubscribers[0].length + slotSubscribers[1].length + slotSubscribers[2].length;
+  document.getElementById('packed-summary-label').textContent =
+    packedEntries.length + ' of ' + totalSlotDeliveries + ' packed';
+}
+
+function togglePacked(subId, slotIdx, cb) {
+  var key = packedKey(subId, slotIdx);
+  if (cb.checked) packedSlotKeys.add(key); else packedSlotKeys.delete(key);
+  renderDelivery();
+}
+
+// ══════════════════════════════
+// REMINDERS
+// ══════════════════════════════
+function renderReminders() {
+  var upcoming = subscribers.filter(function(s){
+    if (s.status !== 'active') return false;
+    return computeRenewal(s) <= 10;
+  }).sort(function(a,b){ return a._renewalDate - b._renewalDate; });
+
+  var el = document.getElementById('reminder-list-full');
+  el.innerHTML = upcoming.length ? upcoming.map(function(s){
+    var diff    = s._daysUntilRenewal;
+    var urgency = diff <= 0 ? 'urgency-today' : diff <= 2 ? 'urgency-soon' : 'urgency-ok';
+    var label   = diff <= 0 ? 'Expires Today' : diff === 1 ? 'Tomorrow' : 'In ' + diff + ' days';
+    var price   = s.freq === 'monthly' ? PLAN_PRICE_MONTHLY[s.bowls] : PLAN_PRICE_WEEKLY[s.bowls];
+    return '<div class="reminder-item">'
+      + '<div class="reminder-icon" style="background:'+dietBg(s.diet)+'">'+dietIconSvg(s.diet)+'</div>'
+      + '<div class="reminder-text"><strong>'+s.name+'</strong><span>Expires '+fmtDate(s._renewalDate)+' · ₹'+price.toLocaleString()+' · '+s.locality+'</span></div>'
+      + '<span class="reminder-urgency '+urgency+'">'+label+'</span>'
+      + '<div class="reminder-actions">'
+      + '<a href="'+waUrl(s.mobile,buildWaRenewalMsg(s))+'" target="_blank" class="action-btn" title="WhatsApp" style="text-decoration:none;color:#25D366;"><svg class="icon"><use href="#ic-whatsapp"/></svg></a>'
+      + '<a href="'+callUrl(s.mobile)+'" class="action-btn" title="Call" style="color:var(--green);"><svg class="icon"><use href="#ic-phone"/></svg></a>'
+      + '<button class="action-btn" onclick="openRenewalModal(\'' + s.id + '\')" title="Mark Renewed"><svg class="icon"><use href="#ic-refresh"/></svg></button>'
+      + '</div></div>';
+  }).join('') : '<p style="color:#bbb;font-size:11px;padding:6px 0;">No renewals in 10 days</p>';
+
+  var paused = subscribers.filter(function(s){ return s.status !== 'active'; });
+  var pel = document.getElementById('paused-list');
+  pel.innerHTML = paused.length ? paused.map(function(s){
+    var pauseInfo = s.pauseFrom && s.pauseUntil
+      ? '<span style="display:block;font-size:9px;color:#b55a1a;margin-top:1px;">'+s.pauseFrom+' → '+s.pauseUntil+'</span>' : '';
+    var msg = 'Hi ' + s.name.split(' ')[0] + ' 👋! Hope you\'re well. Your Lightweight Kitchen subscription is paused. Let us know when you\'re ready to resume! 🥗';
+    return '<div class="reminder-item">'
+      + '<div class="reminder-icon" style="background:var(--rose-light);color:var(--rose);"><svg class="icon"><use href="#ic-pause"/></svg></div>'
+      + '<div class="reminder-text"><strong>'+s.name+'</strong><span>'+s.status+' · '+s.mobile+pauseInfo+'</span></div>'
+      + '<div class="reminder-actions">'
+      + '<a href="'+waUrl(s.mobile,msg)+'" target="_blank" class="action-btn" title="WhatsApp" style="text-decoration:none;color:#25D366;"><svg class="icon"><use href="#ic-whatsapp"/></svg></a>'
+      + '<a href="'+callUrl(s.mobile)+'" class="action-btn" title="Call" style="color:var(--green);"><svg class="icon"><use href="#ic-phone"/></svg></a>'
+      + '<button class="action-btn" onclick="openRenewalModal(\'' + s.id + '\')" title="Reactivate"><svg class="icon"><use href="#ic-refresh"/></svg></button>'
+      + '</div></div>';
+  }).join('') : '<p style="color:#bbb;font-size:11px;padding:6px 0;">All subscribers active</p>';
+}
+
+// ── Renewal modal with new start date + recalculated expiry ──
+function openRenewalModal(docId) {
+  var sub = subscribers.find(function(s){ return s.id === docId; });
+  if (!sub) return;
+  document.getElementById('renewal-sub-name').textContent = sub.name;
+  document.getElementById('renewal-doc-id').value         = docId;
+  document.getElementById('renewal-payment-mode').value   = '';
+  document.getElementById('renewal-utr').value            = '';
+  document.getElementById('utr-section').style.display    = 'none';
+  document.querySelectorAll('.payment-option').forEach(function(el){ el.classList.remove('selected'); });
+  // Default new start = today
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('renewal-start-date').value = today;
+  updateRenewalExpiry();
+  openModal('renewal');
+}
+
+function updateRenewalExpiry() {
+  var docId   = document.getElementById('renewal-doc-id').value;
+  var startVal = document.getElementById('renewal-start-date').value;
+  var sub     = subscribers.find(function(s){ return s.id === docId; });
+  var preview = document.getElementById('renewal-expiry-preview');
+  if (!sub || !startVal) { preview.textContent = ''; return; }
+  var expiry = computeExpiryDate(startVal, sub.freq, '', '');
+  preview.textContent = 'New expiry: ' + fmtDate(expiry) + ' (' + (sub.freq === 'monthly' ? MONTHLY_DELIVERY_DAYS : WEEKLY_DELIVERY_DAYS) + ' delivery days)';
+}
+
+function selectPaymentMode(el) {
+  document.querySelectorAll('.payment-option').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+  var mode = el.getAttribute('data-mode');
+  document.getElementById('renewal-payment-mode').value = mode;
+  document.getElementById('utr-section').style.display = mode === 'online' ? 'block' : 'none';
+}
+
+function confirmRenewal() {
+  var docId    = document.getElementById('renewal-doc-id').value;
+  var mode     = document.getElementById('renewal-payment-mode').value;
+  var utr      = document.getElementById('renewal-utr').value.trim();
+  var startVal = document.getElementById('renewal-start-date').value;
+  var sub      = subscribers.find(function(s){ return s.id === docId; });
+  if (!startVal) { showToast('Please select a start date.', true); return; }
+  if (!mode)     { showToast('Please select a payment method.', true); return; }
+  if (mode === 'online' && !utr) { showToast('Please enter the UTR / transaction reference.', true); return; }
+
+  // Compute new expiry
+  var newExpiry = computeExpiryDate(startVal, sub.freq, '', '');
+  var expiryStr = newExpiry.toISOString().split('T')[0];
+
+  var fields = {
+    status: 'active',
+    start: startVal,
+    expiryDate: expiryStr,
+    lastRenewedAt: new Date().toISOString().split('T')[0],
+    pauseFrom: '', pauseUntil: '',
+    paymentMode: mode
+  };
+  if (mode === 'online') fields.lastUtr = utr;
+
+  fsUpdate(docId, fields)
+    .then(function(){
+      closeModal('renewal');
+      showToast((sub ? sub.name : 'Subscriber') + ' renewed — expires ' + fmtDate(newExpiry) + '!');
+    })
+    .catch(function(e){ showToast('Error: ' + e.message, true); });
+}
+
+// ══════════════════════════════
+// CRUD — ADD / EDIT
+// ══════════════════════════════
+function openModal(id) {
+  if (id === 'add') {
+    editingDocId = null;
+    document.getElementById('modal-add-title').innerHTML = '<svg class="icon"><use href="#ic-plus"/></svg> Add New Subscriber';
+    document.getElementById('save-btn').innerHTML = '<svg class="icon"><use href="#ic-check"/></svg> Save Subscriber';
+    resetAddForm();
+  }
+  document.getElementById('modal-' + id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById('modal-' + id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function resetAddForm() {
+  ['f-name','f-mobile','f-address','f-notes','f-maplink'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('f-bowls').value    = '2';
+  document.getElementById('f-freq').value     = 'weekly';
+  document.getElementById('f-status').value   = 'active';
+  document.getElementById('f-locality').value = '';
+  document.getElementById('f-locality-other').value = '';
+  document.getElementById('other-locality-wrap').style.display  = 'none';
+  document.getElementById('pause-dates-section').style.display  = 'none';
+  // Auto-set today's date (#1)
+  document.getElementById('f-start').value = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('#diet-cards .diet-card').forEach(function(c){ c.classList.remove('selected'); });
+  document.querySelector('#diet-cards .diet-card[data-diet="nonveg"]').classList.add('selected');
+  document.getElementById('f-diet').value = 'nonveg';
+  document.getElementById('veg-days-section').style.display = 'block';
+  document.querySelectorAll('#f-veg-day-chips .day-chip').forEach(function(c){ c.classList.remove('on'); });
+  buildSlotCheckboxes(2);
+}
+
+function onStatusChange() {
+  var val = document.getElementById('f-status').value;
+  document.getElementById('pause-dates-section').style.display = val === 'paused' ? 'block' : 'none';
+  if (val === 'paused') {
+    var today = new Date().toISOString().split('T')[0];
+    if (!document.getElementById('f-pause-from').value) document.getElementById('f-pause-from').value = today;
+  }
+}
+
+function onBowlsChange() { buildSlotCheckboxes(parseInt(document.getElementById('f-bowls').value)); }
+
+function buildSlotCheckboxes(n) {
+  var c    = document.getElementById('slot-checkboxes');
+  var hint = document.getElementById('slot-hint');
+  hint.textContent = 'Choose ' + n + ' slot' + (n > 1 ? 's' : '') + ' matching your ' + n + '-bowl plan';
+  hint.style.color = 'var(--green)';
+  c.innerHTML = SLOTS.map(function(slot, i){
+    return '<label class="slot-cb-label">'
+      + '<input type="checkbox" id="slot-cb-'+i+'" value="'+slot+'" style="accent-color:var(--green);width:15px;height:15px;flex-shrink:0;" onchange="onSlotCheck('+n+',this)">'
+      + '<div>'
+      + '<span style="font-size:12px;font-weight:700;color:#333;">' + SLOT_LABELS[i] + '</span>'
+      + '</div>'
+      + '</label>';
+  }).join('');
+}
+
+function onSlotCheck(n, changedCb) {
+  var checked = document.querySelectorAll('#slot-checkboxes input:checked');
+  var hint    = document.getElementById('slot-hint');
+  if (checked.length > n) {
+    changedCb.checked = false;
+    hint.textContent = 'This plan allows ' + n + ' slot' + (n>1?'s':'') + ' — unselect one first';
+    hint.style.color = 'var(--rose)';
+    setTimeout(function(){
+      hint.textContent = 'Choose ' + n + ' slot' + (n > 1 ? 's' : '') + ' matching your ' + n + '-bowl plan';
+      hint.style.color = 'var(--green)';
+    }, 2500);
+  }
+}
+
+function selectDietCard(el) {
+  document.querySelectorAll('#diet-cards .diet-card').forEach(function(c){ c.classList.remove('selected'); });
+  el.classList.add('selected');
+  var diet = el.getAttribute('data-diet');
+  document.getElementById('f-diet').value = diet;
+  document.getElementById('veg-days-section').style.display = diet === 'veg' ? 'none' : 'block';
+}
+
+function toggleDayChip(el) { el.classList.toggle('on'); }
+
+function onLocalityChange() {
+  var val = document.getElementById('f-locality').value;
+  document.getElementById('other-locality-wrap').style.display = val === 'Other' ? 'block' : 'none';
+}
+
+function saveSubscriber() {
+  var name       = document.getElementById('f-name').value.trim();
+  var mobile     = document.getElementById('f-mobile').value.trim();
+  var bowls      = parseInt(document.getElementById('f-bowls').value);
+  var freq       = document.getElementById('f-freq').value;
+  var diet       = document.getElementById('f-diet').value;
+  var status     = document.getElementById('f-status').value;
+  var start      = document.getElementById('f-start').value;
+  var address    = document.getElementById('f-address').value.trim();
+  var notes      = document.getElementById('f-notes').value.trim();
+  var mapLink    = document.getElementById('f-maplink').value.trim();
+  var localVal   = document.getElementById('f-locality').value;
+  var locality   = localVal === 'Other' ? document.getElementById('f-locality-other').value.trim() : localVal;
+  var vegDays    = Array.from(document.querySelectorAll('#f-veg-day-chips .day-chip.on')).map(function(c){ return c.getAttribute('data-day'); });
+  var slots      = Array.from(document.querySelectorAll('#slot-checkboxes input:checked')).map(function(c){ return c.value; });
+  var pauseFrom  = status === 'paused' ? document.getElementById('f-pause-from').value  : '';
+  var pauseUntil = status === 'paused' ? document.getElementById('f-pause-until').value : '';
+
+  // Required field validation
+  if (!name)     { showToast('Full name is required.', true); return; }
+  if (!mobile)   { showToast('Mobile number is required.', true); return; }
+  if (!locality) { showToast('Please select a locality.', true); return; }
+  if (!address)  { showToast('Delivery address is required.', true); return; }
+  if (!start)    { showToast('Please set a start date.', true); return; }
+  if (slots.length !== bowls) {
+    showToast('Please select exactly ' + bowls + ' slot' + (bowls > 1 ? 's' : '') + ' for a ' + bowls + '-bowl plan.', true);
+    return;
+  }
+  if (status === 'paused' && (!pauseFrom || !pauseUntil)) {
+    showToast('Please set both pause dates.', true); return;
+  }
+
+  // Compute expiry date based on start + freq + pause
+  var expiryDateObj = computeExpiryDate(start, freq, pauseFrom, pauseUntil);
+  var expiryDate    = expiryDateObj.toISOString().split('T')[0];
+
+  var obj = {
+    name, mobile, bowls, freq, diet, vegDays, slots,
+    locality, address, mapLink, notes, start, expiryDate, status,
+    pauseFrom, pauseUntil
+  };
+
+  var btn = document.getElementById('save-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'Saving…';
+
+  var promise = editingDocId ? fsUpdate(editingDocId, obj) : fsAdd(obj);
+  promise.then(function(){
+    showToast(editingDocId ? (name + ' updated!') : (name + ' added!'));
+    closeModal('add');
+    editingDocId = null;
+  }).catch(function(e){
+    showToast('Save failed: ' + e.message, true);
+  }).finally(function(){
+    btn.disabled = false;
+    btn.innerHTML = editingDocId
+      ? '<svg class="icon"><use href="#ic-check"/></svg> Update Subscriber'
+      : '<svg class="icon"><use href="#ic-check"/></svg> Save Subscriber';
+  });
+}
+
+function editSubscriber(docId) {
+  var s = subscribers.find(function(x){ return x.id === docId; });
+  if (!s) return;
+  editingDocId = docId;
+  document.getElementById('modal-add-title').innerHTML = '<svg class="icon"><use href="#ic-edit"/></svg> Edit — ' + s.name;
+  document.getElementById('save-btn').innerHTML = '<svg class="icon"><use href="#ic-check"/></svg> Update Subscriber';
+  document.getElementById('f-name').value    = s.name    || '';
+  document.getElementById('f-mobile').value  = s.mobile  || '';
+  document.getElementById('f-bowls').value   = s.bowls   || 2;
+  document.getElementById('f-freq').value    = s.freq    || 'weekly';
+  document.getElementById('f-status').value  = s.status  || 'active';
+  document.getElementById('f-start').value   = s.start   || '';
+  document.getElementById('f-address').value = s.address || '';
+  document.getElementById('f-notes').value   = s.notes   || '';
+  document.getElementById('f-maplink').value = s.mapLink || '';
+  document.getElementById('f-diet').value    = s.diet    || 'nonveg';
+  document.getElementById('f-locality').value = s.locality || '';
+  document.getElementById('other-locality-wrap').style.display  = s.locality === 'Other' ? 'block' : 'none';
+  document.getElementById('veg-days-section').style.display     = s.diet === 'veg' ? 'none' : 'block';
+  document.getElementById('pause-dates-section').style.display  = s.status === 'paused' ? 'block' : 'none';
+  if (s.pauseFrom)  document.getElementById('f-pause-from').value  = s.pauseFrom;
+  if (s.pauseUntil) document.getElementById('f-pause-until').value = s.pauseUntil;
+  document.querySelectorAll('#diet-cards .diet-card').forEach(function(c){ c.classList.remove('selected'); });
+  var dc = document.querySelector('#diet-cards .diet-card[data-diet="' + s.diet + '"]');
+  if (dc) dc.classList.add('selected');
+  document.querySelectorAll('#f-veg-day-chips .day-chip').forEach(function(chip){
+    chip.classList.toggle('on', (s.vegDays||[]).indexOf(chip.getAttribute('data-day')) !== -1);
+  });
+  buildSlotCheckboxes(s.bowls || 2);
+  setTimeout(function(){
+    (s.slots||[]).forEach(function(slot){
+      document.querySelectorAll('#slot-checkboxes input').forEach(function(cb){
+        if (cb.value === slot) cb.checked = true;
+      });
+    });
+  }, 20);
+  document.getElementById('modal-add').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function viewSubscriber(docId) {
+  var s = subscribers.find(function(x){ return x.id === docId; });
+  if (!s) return;
+  var pr  = s.freq === 'monthly' ? PLAN_PRICE_MONTHLY[s.bowls] : PLAN_PRICE_WEEKLY[s.bowls];
+  computeRenewal(s);
+  var mapHtml = s.mapLink ? '<a href="'+s.mapLink+'" target="_blank" style="color:var(--green);font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:4px;"><svg class="icon"><use href="#ic-pin"/></svg> Open in Google Maps →</a>' : '—';
+  var slotsText = (s.slots||[]).map(function(sl){
+    var idx = SLOTS.indexOf(sl); return idx >= 0 ? SLOT_NAMES[idx] : sl;
+  }).join(', ');
+  document.getElementById('modal-view-body').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
+    + vrow('Name', s.name)
+    + vrow('Mobile', '<a href="'+callUrl(s.mobile)+'" style="color:var(--green);font-weight:700;">'+s.mobile+'</a>')
+    + vrow('Plan', s.bowls + ' Bowl/Day · ' + s.freq)
+    + vrow('Price', '₹' + pr.toLocaleString() + '/' + s.freq)
+    + vrow('Diet', DIET_LABEL[s.diet])
+    + vrow('Veg Days', s.vegDays && s.vegDays.length ? s.vegDays.join(', ') : 'None')
+    + vrow('Slots', slotsText)
+    + vrow('Locality', s.locality)
+    + vrow('Address', s.address || '—')
+    + vrow('Map', mapHtml)
+    + vrow('Start Date', fmtDate(s.start))
+    + vrow('Last Renewed', s.lastRenewedAt ? fmtDate(s.lastRenewedAt) : '—')
+    + vrow('Expires On', s.status === 'active' ? expiryDateStr(s) : '—')
+    + vrow('Status', statusPill(s.status, s.pauseFrom, s.pauseUntil))
+    + (s.pauseFrom ? vrow('Pause Period', s.pauseFrom + ' → ' + (s.pauseUntil||'?')) : '')
+    + (s.paymentMode ? vrow('Last Payment', (s.paymentMode === 'online' ? 'Online' : 'Cash') + (s.lastUtr ? ' · UTR: ' + s.lastUtr : '')) : '')
+    + '</div>'
+    + (s.notes ? '<div style="margin-top:10px;background:#f8f6f2;border-radius:9px;padding:10px 12px;"><div style="font-size:9.5px;font-weight:700;color:#aaa;text-transform:uppercase;margin-bottom:4px;">Notes</div><div style="font-size:12px;color:#555;line-height:1.5;">'+s.notes+'</div></div>' : '')
+    + '<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">'
+    + '<a href="'+waUrl(s.mobile, buildWaRenewalMsg(s))+'" target="_blank" class="btn btn-primary" style="background:#25D366;text-decoration:none;font-size:11px;"><svg class="icon"><use href="#ic-whatsapp"/></svg> WhatsApp</a>'
+    + '<a href="'+callUrl(s.mobile)+'" class="btn btn-ghost" style="text-decoration:none;font-size:11px;"><svg class="icon"><use href="#ic-phone"/></svg> Call</a>'
+    + '<button class="btn btn-ghost" style="font-size:11px;" onclick="openRenewalModal(\''+s.id+'\')"><svg class="icon"><use href="#ic-refresh"/></svg> Mark Renewed</button>'
+    + '</div>';
+  document.getElementById('modal-edit-btn').onclick = function(){ closeModal('view'); editSubscriber(docId); };
+  openModal('view');
+}
+
+function vrow(label, val) {
+  return '<div style="background:#f8f6f2;border-radius:9px;padding:9px 11px;">'
+    + '<div style="font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">'+label+'</div>'
+    + '<div style="font-size:12px;font-weight:600;color:#1a1a1a;line-height:1.4;">'+val+'</div>'
+    + '</div>';
+}
+
+function deleteSubscriber(docId) {
+  var sub = subscribers.find(function(s){ return s.id === docId; });
+  if (!sub) return;
+  if (!confirm('Delete ' + sub.name + '? This cannot be undone.')) return;
+  fsDelete(docId)
+    .then(function(){ showToast(sub.name + ' deleted.'); })
+    .catch(function(e){ showToast('Delete failed: ' + e.message, true); });
+}
+
+// ── Pause / Resume ──
+function promptPause(docId) {
+  var s = subscribers.find(function(x){ return x.id === docId; });
+  if (!s) return;
+  if (s.status === 'active') {
+    document.getElementById('pause-sub-name').textContent = s.name;
+    document.getElementById('pause-doc-id').value         = docId;
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('pause-from').value  = today;
+    document.getElementById('pause-until').value = '';
+    openModal('pause');
+  } else {
+    if (!confirm('Resume deliveries for ' + s.name + '?')) return;
+    fsUpdate(docId, { status:'active', pauseFrom:'', pauseUntil:'' })
+      .then(function(){ showToast(s.name + ' is now active.'); })
+      .catch(function(e){ showToast('Error: ' + e.message, true); });
+  }
+}
+
+function confirmPause() {
+  var docId = document.getElementById('pause-doc-id').value;
+  var from  = document.getElementById('pause-from').value;
+  var until = document.getElementById('pause-until').value;
+  if (!from || !until) { showToast('Please select both dates.', true); return; }
+  if (until <= from)   { showToast("'Until' date must be after 'From' date.", true); return; }
+  var sub = subscribers.find(function(s){ return s.id === docId; });
+  // Recalculate expiry extended by pause duration
+  var newExpiry = null;
+  if (sub && sub.start) {
+    newExpiry = computeExpiryDate(sub.start, sub.freq, from, until);
+  }
+  var fields = { status:'paused', pauseFrom:from, pauseUntil:until };
+  if (newExpiry) fields.expiryDate = newExpiry.toISOString().split('T')[0];
+  fsUpdate(docId, fields)
+    .then(function(){
+      closeModal('pause');
+      showToast((sub ? sub.name : 'Subscriber') + ' paused until ' + until + '. Expiry extended.');
+    })
+    .catch(function(e){ showToast('Error: ' + e.message, true); });
+}
+
+// ── Change Diet ──
+function changeDiet(docId) {
+  var s = subscribers.find(function(x){ return x.id === docId; });
+  if (!s) return;
+  document.getElementById('diet-change-name').textContent = s.name;
+  document.getElementById('diet-edit-value').value        = s.diet;
+  document.getElementById('diet-edit-id').value           = docId;
+  document.querySelectorAll('#diet-edit-cards .diet-card').forEach(function(c){ c.classList.remove('selected'); });
+  var dc = document.querySelector('#diet-edit-cards .diet-card[data-diet="'+s.diet+'"]');
+  if (dc) dc.classList.add('selected');
+  document.querySelectorAll('#diet-edit-chips .day-chip').forEach(function(chip){
+    chip.classList.toggle('on', (s.vegDays||[]).indexOf(chip.getAttribute('data-day')) !== -1);
+  });
+  document.getElementById('diet-edit-vegdays').style.display = s.diet === 'veg' ? 'none' : 'block';
+  openModal('diet');
+}
+function selectDietEditCard(el) {
+  document.querySelectorAll('#diet-edit-cards .diet-card').forEach(function(c){ c.classList.remove('selected'); });
+  el.classList.add('selected');
+  var diet = el.getAttribute('data-diet');
+  document.getElementById('diet-edit-value').value = diet;
+  document.getElementById('diet-edit-vegdays').style.display = diet === 'veg' ? 'none' : 'block';
+}
+function toggleDietEditChip(el) { el.classList.toggle('on'); }
+function saveDietChange() {
+  var docId   = document.getElementById('diet-edit-id').value;
+  var diet    = document.getElementById('diet-edit-value').value;
+  var vegDays = Array.from(document.querySelectorAll('#diet-edit-chips .day-chip.on')).map(function(c){ return c.getAttribute('data-day'); });
+  var sub     = subscribers.find(function(s){ return s.id === docId; });
+  if (!confirm('Update diet for ' + (sub ? sub.name : 'this subscriber') + ' to ' + DIET_LABEL[diet] + '?')) return;
+  fsUpdate(docId, { diet, vegDays })
+    .then(function(){ closeModal('diet'); showToast('Diet updated for ' + (sub ? sub.name : 'subscriber') + '!'); })
+    .catch(function(e){ showToast('Error: ' + e.message, true); });
+}
+
+// ══════════════════════════════
+// CLOCK
+// ══════════════════════════════
+function updateClock() {
+  var now = new Date();
+  var h   = now.getHours().toString().padStart(2,'0');
+  var m   = now.getMinutes().toString().padStart(2,'0');
+  document.getElementById('live-time').textContent   = h + ':' + m;
+  document.getElementById('topbar-date').textContent = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+updateClock(); setInterval(updateClock, 15000);
+
+// ══════════════════════════════
+// TOAST
+// ══════════════════════════════
+function showToast(msg, err) {
+  var t = document.getElementById('toast');
+  document.getElementById('toast-icon').innerHTML = '<use href="#' + (err ? 'ic-x-circle' : 'ic-check') + '"/>';
+  document.getElementById('toast-msg').textContent  = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3500);
+}
+
+// ══════════════════════════════
+// INIT
+// ══════════════════════════════
+document.addEventListener('DOMContentLoaded', function(){
+  buildSlotCheckboxes(2);
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay){
+    overlay.addEventListener('click', function(e){
+      if (e.target === overlay) {
+        var id = overlay.id.replace('modal-','');
+        closeModal(id);
+      }
+    });
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(function(o){
+        o.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    }
+  });
+});
+</script>
+</body>
+</html>
