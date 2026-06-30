@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Lightweight Kitchen - Premium fitness meal prep. Balanced protein, smart carbs, fresh vegetables. Chicken, Egg, and Vegetarian plans, delivered 6 days a week.">
+    <meta name="description" content="Lightweight Kitchen - Premium fitness meal prep. Balanced protein, smart carbs, fresh vegetables. Non-Vegetarian, Eggitarian, and Vegetarian plans, delivered 6 days a week.">
     <title>Lightweight Kitchen — Premium Fitness Meal Prep</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,125 +30,175 @@
         }
     </script>
 
-    <style>
-        * { font-family: 'Inter', sans-serif; }
 
-        .meal-scroll { display:flex; gap:1rem; overflow-x:auto; padding-bottom:1rem; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
-        .meal-scroll::-webkit-scrollbar { height:4px; }
-        .meal-scroll::-webkit-scrollbar-track { background:#F3F4F6; border-radius:10px; }
-        .meal-scroll::-webkit-scrollbar-thumb { background:#D1D5DB; border-radius:10px; }
-        .meal-card-h { min-width:280px; max-width:280px; scroll-snap-align:start; transition:transform .2s,box-shadow .2s; }
-        .meal-card-h:hover { transform:translateY(-2px); box-shadow:0 8px 24px -6px rgba(0,0,0,.10); }
+<style>
+    * { font-family: 'Inter', sans-serif; }
 
-        .diet-pill { display:flex; align-items:center; gap:.4rem; padding:.4rem 1rem; border-radius:6px; border:1px solid; font-weight:600; font-size:.75rem; cursor:pointer; transition:all .15s; white-space:nowrap; letter-spacing:.01em; }
-        .diet-pill-on  { background:#111827; border-color:#111827; color:#fff; }
-        .diet-pill-off { background:#fff; border-color:#E5E7EB; color:#6B7280; }
-        .diet-pill-off:hover { border-color:#9CA3AF; color:#374151; }
+    .meal-scroll { display:flex; gap:1rem; overflow-x:auto; padding-bottom:1rem; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+    .meal-scroll::-webkit-scrollbar { height:4px; }
+    .meal-scroll::-webkit-scrollbar-track { background:#F3F4F6; border-radius:10px; }
+    .meal-scroll::-webkit-scrollbar-thumb { background:#D1D5DB; border-radius:10px; }
+    .meal-card-h { min-width:280px; max-width:280px; scroll-snap-align:start; transition:transform .2s,box-shadow .2s; }
+    .meal-card-h:hover { transform:translateY(-2px); box-shadow:0 8px 24px -6px rgba(0,0,0,.10); }
 
-        input[type=range] { accent-color: #166534; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:#166534; cursor:pointer; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.15); transition:transform .15s; }
-        input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.1); }
-        input[type=range]::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:#166534; cursor:pointer; border:2px solid #fff; }
+    .diet-pill { display:flex; align-items:center; gap:.4rem; padding:.4rem 1rem; border-radius:6px; border:1px solid; font-weight:600; font-size:.75rem; cursor:pointer; transition:all .15s; white-space:nowrap; letter-spacing:.01em; }
+    .diet-pill-on  { background:#111827; border-color:#111827; color:#fff; }
+    .diet-pill-off { background:#fff; border-color:#E5E7EB; color:#6B7280; }
+    .diet-pill-off:hover { border-color:#9CA3AF; color:#374151; }
 
-        .goal-on  { background:#F0FDF4!important; border-color:#166534!important; color:#14532D!important; font-weight:700; }
-        .goal-off { background:#F9FAFB!important; border-color:#E5E7EB!important; color:#9CA3AF!important; font-weight:500; }
+    input[type=range] { accent-color: #166534; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:#166534; cursor:pointer; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.15); transition:transform .15s; }
+    input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.1); }
+    input[type=range]::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:#166534; cursor:pointer; border:2px solid #fff; }
 
-        .modal-wrap { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:1rem; background:rgba(0,0,0,.5); backdrop-filter:blur(4px); }
+    .goal-on  { background:#F0FDF4!important; border-color:#166534!important; color:#14532D!important; font-weight:700; }
+    .goal-off { background:#F9FAFB!important; border-color:#E5E7EB!important; color:#9CA3AF!important; font-weight:500; }
 
-        .nav-link { color:#6B7280; font-size:.875rem; font-weight:500; transition:color .15s; }
-        .nav-link:hover { color:#111827; }
+    .modal-wrap { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:1rem; background:rgba(0,0,0,.5); backdrop-filter:blur(4px); }
 
-        .protein-bar-fill { background: linear-gradient(90deg, #166534, #15803d); }
+    .nav-link { color:#6B7280; font-size:.875rem; font-weight:500; transition:color .15s; }
+    .nav-link:hover { color:#111827; }
 
-        details summary::-webkit-details-marker { display:none; }
+    .protein-bar-fill { background: linear-gradient(90deg, #166534, #15803d); }
 
-        @keyframes borderPulse { 0%,100%{box-shadow:0 0 0 0 rgba(22,101,52,0.12)} 50%{box-shadow:0 0 0 6px rgba(22,101,52,0.05)} }
-        .featured-plan { animation: borderPulse 3s ease-in-out infinite; }
+    details summary::-webkit-details-marker { display:none; }
 
-        .plan-detail-modal { position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; padding:1rem; background:rgba(0,0,0,.55); backdrop-filter:blur(5px); }
-        .plan-detail-inner { background:#fff; border-radius:1.25rem; max-width:560px; width:100%; max-height:90vh; overflow-y:auto; border:1px solid #E5E7EB; }
-        .plan-detail-inner::-webkit-scrollbar { width:4px; }
-        .plan-detail-inner::-webkit-scrollbar-thumb { background:#D1D5DB; border-radius:10px; }
+    @keyframes borderPulse { 0%,100%{box-shadow:0 0 0 0 rgba(22,101,52,0.12)} 50%{box-shadow:0 0 0 6px rgba(22,101,52,0.05)} }
+    .featured-plan { animation: borderPulse 3s ease-in-out infinite; }
 
-        .sub-form-modal { position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; padding:1rem; background:rgba(0,0,0,.55); backdrop-filter:blur(5px); }
-        .sub-form-inner { background:#fff; border-radius:1.25rem; max-width:560px; width:100%; max-height:92vh; overflow-y:auto; border:1px solid #E5E7EB; }
-        .sub-form-inner::-webkit-scrollbar { width:4px; }
-        .sub-form-inner::-webkit-scrollbar-thumb { background:#D1D5DB; border-radius:10px; }
-        .sub-input { width:100%; border:1px solid #E5E7EB; border-radius:0.625rem; padding:0.7rem 0.9rem; font-size:0.875rem; color:#111827; transition:border-color .15s; background:#fff; }
-        .sub-input:focus { outline:none; border-color:#166534; box-shadow:0 0 0 3px rgba(22,101,52,0.08); }
-        .sub-label { font-size:0.75rem; font-weight:600; color:#374151; margin-bottom:0.4rem; display:block; }
-        .sub-section-title { font-size:0.7rem; font-weight:700; color:#166534; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:0.9rem; }
-        .day-chip { padding:0.4rem 0.7rem; border-radius:0.5rem; border:1px solid #E5E7EB; font-size:0.75rem; font-weight:600; color:#6B7280; cursor:pointer; transition:all .15s; user-select:none; }
-        .day-chip.day-chip-on { background:#F0FDF4; border-color:#166534; color:#14532D; }
-        .slot-card { border:1px solid #E5E7EB; border-radius:0.75rem; padding:0.85rem 1rem; cursor:pointer; transition:all .15s; }
-        .slot-card.slot-on { border-color:#166534; background:#F0FDF4; }
-        .diet-radio-card { border:1px solid #E5E7EB; border-radius:0.75rem; padding:0.85rem 1rem; cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:0.75rem; }
-        .diet-radio-card.diet-radio-on { border-color:#166534; background:#F0FDF4; }
+    .plan-detail-modal { position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; padding:1rem; background:rgba(0,0,0,.55); backdrop-filter:blur(5px); }
+    .plan-detail-inner { background:#fff; border-radius:1.25rem; max-width:560px; width:100%; max-height:90vh; overflow-y:auto; border:1px solid #E5E7EB; }
+    .plan-detail-inner::-webkit-scrollbar { width:4px; }
+    .plan-detail-inner::-webkit-scrollbar-thumb { background:#D1D5DB; border-radius:10px; }
 
-        /* Pricing toggle in modal */
-        .freq-toggle-btn { flex:1; padding:0.5rem 1rem; border-radius:0.5rem; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all .15s; border:none; }
-        .freq-toggle-btn.freq-on  { background:#111827; color:#fff; }
-        .freq-toggle-btn.freq-off { background:transparent; color:#6B7280; }
+    .sub-form-modal { position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; padding:1rem; background:rgba(0,0,0,.55); backdrop-filter:blur(5px); }
+    .sub-form-inner { background:#fff; border-radius:1.25rem; max-width:560px; width:100%; max-height:92vh; overflow-y:auto; border:1px solid #E5E7EB; }
+    .sub-form-inner::-webkit-scrollbar { width:4px; }
+    .sub-form-inner::-webkit-scrollbar-thumb { background:#D1D5DB; border-radius:10px; }
 
-        /* Pricing option cards in modal */
-        .pricing-opt-card { border:2px solid #E5E7EB; border-radius:0.875rem; padding:1rem 1.1rem; cursor:pointer; transition:all .15s; }
-        .pricing-opt-card.pricing-opt-on  { border-color:#166534; background:#F0FDF4; }
-        .pricing-opt-card:hover:not(.pricing-opt-on) { border-color:#9CA3AF; }
+    /* ── Redesigned form field styles ── */
+    .sf-input { width:100%; border:1.5px solid #E5E7EB; border-radius:0.625rem; padding:0.75rem 1rem; font-size:0.875rem; color:#111827; transition:border-color .15s, box-shadow .15s; background:#fff; }
+    .sf-input:focus { outline:none; border-color:#166534; box-shadow:0 0 0 3px rgba(22,101,52,0.08); }
+    .sf-label { font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.45rem; display:block; }
+    .sf-hint  { font-size:0.72rem; color:#9CA3AF; margin-top:0.3rem; }
 
-        /* Logo placeholder */
-        .logo-placeholder { height:36px; min-width:120px; border:1.5px dashed #D1D5DB; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#9CA3AF; font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:0 12px; }
-    </style>
+    /* Section blocks */
+    .sf-section { background:#F9FAFB; border:1px solid #E5E7EB; border-radius:1rem; padding:1.25rem 1.25rem; }
+    .sf-section-label { font-size:0.65rem; font-weight:800; color:#166534; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; }
+    .sf-section-label i { font-size:0.7rem; }
+
+    /* Diet option cards */
+    .diet-opt { border:1.5px solid #E5E7EB; border-radius:0.75rem; padding:0.85rem 1rem; cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:0.75rem; background:#fff; }
+    .diet-opt:hover { border-color:#9CA3AF; }
+    .diet-opt.diet-opt-on { border-color:#166534; background:#F0FDF4; }
+    .diet-opt-radio { width:18px; height:18px; border-radius:50%; border:2px solid #D1D5DB; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .15s; }
+    .diet-opt.diet-opt-on .diet-opt-radio { border-color:#166534; background:#166534; }
+    .diet-opt.diet-opt-on .diet-opt-radio::after { content:''; width:6px; height:6px; border-radius:50%; background:#fff; display:block; }
+
+    /* Diet mode tabs */
+    .diet-mode-tab { flex:1; padding:0.55rem 1rem; border-radius:0.5rem; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all .15s; border:none; text-align:center; }
+    .diet-mode-tab.mode-on  { background:#111827; color:#fff; }
+    .diet-mode-tab.mode-off { background:transparent; color:#6B7280; }
+
+    /* Delivery slots */
+    .slot-opt { border:1.5px solid #E5E7EB; border-radius:0.75rem; padding:0.85rem 1rem; cursor:pointer; transition:all .15s; background:#fff; display:flex; align-items:center; gap:0.9rem; }
+    .slot-opt:hover { border-color:#9CA3AF; }
+    .slot-opt.slot-on { border-color:#166534; background:#F0FDF4; }
+    .slot-icon { width:34px; height:34px; border-radius:8px; background:#F3F4F6; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.85rem; transition:background .15s; }
+    .slot-opt.slot-on .slot-icon { background:#DCFCE7; }
+    .slot-check { width:18px; height:18px; border-radius:4px; border:2px solid #D1D5DB; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-left:auto; transition:all .15s; }
+    .slot-opt.slot-on .slot-check { border-color:#166534; background:#166534; }
+    .slot-opt.slot-on .slot-check::after { content:'✓'; color:#fff; font-size:10px; font-weight:800; }
+
+    /* Veg days chips */
+    .veg-day { padding:0.5rem 0.85rem; border-radius:0.5rem; border:1.5px solid #E5E7EB; font-size:0.75rem; font-weight:600; color:#6B7280; cursor:pointer; transition:all .15s; user-select:none; background:#fff; }
+    .veg-day.veg-day-on { background:#F0FDF4; border-color:#166534; color:#14532D; }
+    .veg-day:hover:not(.veg-day-on) { border-color:#9CA3AF; color:#374151; }
+
+    /* Location selectors */
+    .sf-location-row { background:#fff; border:1.5px solid #E5E7EB; border-radius:0.75rem; padding:0.9rem 1rem; }
+    .sf-location-slot-tag { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#166534; background:#F0FDF4; border:1px solid #BBF7D0; padding:0.2rem 0.5rem; border-radius:4px; }
+
+    /* Pricing toggle in modal */
+    .freq-toggle-btn { flex:1; padding:0.5rem 1rem; border-radius:0.5rem; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all .15s; border:none; }
+    .freq-toggle-btn.freq-on  { background:#111827; color:#fff; }
+    .freq-toggle-btn.freq-off { background:transparent; color:#6B7280; }
+
+    /* Pricing option cards in modal */
+    .pricing-opt-card { border:2px solid #E5E7EB; border-radius:0.875rem; padding:1rem 1.1rem; cursor:pointer; transition:all .15s; }
+    .pricing-opt-card.pricing-opt-on  { border-color:#166534; background:#F0FDF4; }
+    .pricing-opt-card:hover:not(.pricing-opt-on) { border-color:#9CA3AF; }
+
+    /* Logo placeholder */
+    .logo-placeholder { height:36px; min-width:120px; border:1.5px dashed #D1D5DB; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#9CA3AF; font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:0 12px; }
+
+    /* Legacy compat – keep old class names mapped so JS works */
+    .sub-input { width:100%; border:1.5px solid #E5E7EB; border-radius:0.625rem; padding:0.75rem 1rem; font-size:0.875rem; color:#111827; transition:border-color .15s; background:#fff; }
+    .sub-input:focus { outline:none; border-color:#166534; box-shadow:0 0 0 3px rgba(22,101,52,0.08); }
+
+    /* Bell icon used on plan card CTAs */
+    .bell-icon { width:1rem; height:1rem; display:inline-block; vertical-align:middle; color:#FACC15; flex-shrink:0; }
+</style>
+
 </head>
 <body class="text-gray-900 antialiased min-h-screen bg-white overflow-x-hidden">
 
+
 <!-- Promo banner -->
+
 <div class="bg-gray-900 text-white text-center py-2.5 px-4 text-xs font-semibold tracking-wide relative z-20">
     <span class="text-green-400 font-bold">Performance Meals, Made Simple.</span>
-    <span class="text-gray-300 ml-2">Chicken, Egg & Vegetarian options. Fresh delivery Mon–Sat across Mysore.</span>
+    <span class="text-gray-300 ml-2">Non-Vegetarian, Eggitarian & Vegetarian options. Fresh delivery Mon–Sat across Mysore.</span>
 </div>
 
+
 <!-- Header -->
+
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-     <a href="#" class="flex items-center gap-3" aria-label="LIGHTWEIGH"> <img src="LW.JPG" alt="Lightweight Kitchen" class="h-9 w-auto object-contain"> </a>
+     <a href="#" class="flex items-center gap-3" aria-label="LIGHTWEIGHT"> <img src="LW.JPG" alt="Lightweight Kitchen" class="h-9 w-auto object-contain"> </a>
 
-        <nav class="hidden lg:flex items-center gap-7">
-            <a href="#menu-explore" class="nav-link">Menu</a>
-            <a href="#plans"        class="nav-link">Plans</a>
-            <a href="#estimator"    class="nav-link">Calculator</a>
-            <a href="#comparison"   class="nav-link">Why Us</a>
-            <a href="#benefits"     class="nav-link">Standards</a>
-            <a href="#faq"          class="nav-link">FAQ</a>
-        </nav>
 
-        <div class="flex items-center gap-3">
-            <a href="#plans" class="hidden sm:inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold py-2.5 px-5 rounded-lg text-sm transition-all">
+    <nav class="hidden lg:flex items-center gap-7">
+        <a href="#menu-explore" class="nav-link">Menu</a>
+        <a href="#plans"        class="nav-link">Plans</a>
+        <a href="#estimator"    class="nav-link">Calculator</a>
+        <a href="#comparison"   class="nav-link">Why Us</a>
+        <a href="#benefits"     class="nav-link">Standards</a>
+        <a href="#faq"          class="nav-link">FAQ</a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+        <a href="#plans" class="hidden sm:inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold py-2.5 px-5 rounded-lg text-sm transition-all">
+            <i class="fa-brands fa-whatsapp text-green-400"></i> Get Started
+        </a>
+        <button id="mob-btn" class="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100" aria-label="Menu" aria-expanded="false">
+            <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+    </div>
+</div>
+<!-- Mobile nav -->
+<div id="mob-nav" class="hidden lg:hidden bg-white border-b border-gray-200">
+    <div class="px-4 pt-2 pb-4 space-y-0.5">
+        <a href="#menu-explore" onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">Menu</a>
+        <a href="#plans"        onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">Plans</a>
+        <a href="#estimator"    onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">Calculator</a>
+        <a href="#comparison"   onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">Why Us</a>
+        <a href="#benefits"     onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">Standards</a>
+        <a href="#faq"          onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">FAQ</a>
+        <div class="pt-2">
+            <a href="#plans" onclick="closeMob()" class="flex items-center justify-center gap-2 bg-gray-900 text-white font-semibold py-3 rounded-lg mt-1 text-sm">
                 <i class="fa-brands fa-whatsapp text-green-400"></i> Get Started
             </a>
-            <button id="mob-btn" class="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100" aria-label="Menu" aria-expanded="false">
-                <i class="fa-solid fa-bars text-xl"></i>
-            </button>
         </div>
     </div>
-    <!-- Mobile nav -->
-    <div id="mob-nav" class="hidden lg:hidden bg-white border-b border-gray-200">
-        <div class="px-4 pt-2 pb-4 space-y-0.5">
-            <a href="#menu-explore" onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">Menu</a>
-            <a href="#plans"        onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">Plans</a>
-            <a href="#estimator"    onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">Calculator</a>
-            <a href="#comparison"   onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">Why Us</a>
-            <a href="#benefits"     onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">Standards</a>
-            <a href="#faq"          onclick="closeMob()" class="block py-2.5 px-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">FAQ</a>
-            <div class="pt-2">
-                <a href="#plans" onclick="closeMob()" class="flex items-center justify-center gap-2 bg-gray-900 text-white font-semibold py-3 rounded-lg mt-1 text-sm">
-                    <i class="fa-brands fa-whatsapp text-green-400"></i> Get Started
-                </a>
-            </div>
-        </div>
-    </div>
+</div>
+
 </header>
 
-<!-- ===== HERO ===== -->
+
+<!-- = HERO = -->
+
 <section class="relative py-16 md:py-24 lg:py-28 bg-white overflow-hidden">
     <div class="absolute inset-0 opacity-[0.025]" style="background-image: linear-gradient(#111827 1px,transparent 1px),linear-gradient(90deg,#111827 1px,transparent 1px); background-size:48px 48px;"></div>
     <div class="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-12 gap-12 items-center relative z-10">
@@ -162,7 +211,7 @@
                 You focus on the workout, we'll make sure it <span class="text-green-700">works out.</span>
             </h1>
             <p class="text-lg text-gray-500 max-w-xl mx-auto md:mx-0 leading-relaxed font-normal">
-                Every meal is carefully planned to deliver high-quality nutrition with balanced protein, smart carbohydrates, and fresh vegetables. Whether you prefer chicken, eggs, or a fully vegetarian lifestyle, our meals are designed to support performance, recovery, and long-term health — without the hassle of planning, cooking, or tracking.
+                Every meal is carefully planned to deliver high-quality nutrition with balanced protein, smart carbohydrates, and fresh vegetables. Whether you prefer Non-Vegetarian, Eggitarian, or a fully Vegetarian lifestyle, our meals are designed to support performance, recovery, and long-term health — without the hassle of planning, cooking, or tracking.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3">
                 <a href="#how-it-works" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-gray-900 hover:bg-gray-800 text-white font-semibold text-base py-4 px-8 rounded-lg transition-all">
@@ -170,8 +219,8 @@
                 </a>
             </div>
             <div class="pt-4 flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-gray-500 text-sm font-medium">
-                <span class="flex items-center gap-1.5"><i class="fa-solid fa-drumstick-bite text-green-600 text-xs"></i>Chicken</span>
-                <span class="flex items-center gap-1.5"><i class="fa-solid fa-egg text-green-600 text-xs"></i>Eggetarian</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-drumstick-bite text-green-600 text-xs"></i>Non-Vegetarian</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-egg text-green-600 text-xs"></i>Eggitarian</span>
                 <span class="flex items-center gap-1.5"><i class="fa-solid fa-seedling text-green-600 text-xs"></i>Vegetarian</span>
             </div>
         </div>
@@ -182,7 +231,7 @@
                          alt="Premium meal prep, plated" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 <div class="absolute -bottom-4 -left-4 bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm">
-                    <div class="text-2xl font-black text-gray-900 leading-none">47g</div>
+                    <div class="text-2xl font-black text-gray-900 leading-none">32g</div>
                     <div class="text-xs text-gray-400 font-medium mt-0.5">Avg Protein / Meal</div>
                 </div>
                 <div class="absolute -top-3 -right-3 bg-green-700 text-white rounded-xl px-3 py-2 text-xs font-bold tracking-wide">
@@ -193,7 +242,9 @@
     </div>
 </section>
 
-<!-- ===== HOW IT WORKS (compact) ===== -->
+
+<!-- = HOW IT WORKS (compact) = -->
+
 <section class="py-8 bg-white border-y border-gray-100 scroll-mt-20" id="how-it-works">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="flex flex-col sm:flex-row items-center gap-0 sm:gap-0 max-w-3xl mx-auto">
@@ -224,173 +275,192 @@
     </div>
 </section>
 
-<!-- ===== MENU SECTION ===== -->
+
+<!-- = MENU SECTION = -->
+
 <section class="py-16 bg-white border-y border-gray-200 scroll-mt-20" id="menu-explore">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
 
-        <div class="text-center max-w-2xl mx-auto mb-10">
-            <span class="text-green-700 font-semibold text-xs uppercase tracking-widest block mb-2">This Week's Menu</span>
-            <h2 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">Chef-Crafted. Macro-Balanced.</h2>
-            <p class="text-gray-400 mt-2 text-sm">Every meal hits 45–50g protein. Scroll to explore →</p>
-        </div>
 
-        <!-- Diet Profile Toggle -->
-        <div class="flex items-center justify-center gap-2 flex-wrap mb-10">
-            <div class="diet-pill diet-pill-on" id="diet-btn-nonveg" onclick="setDiet('nonveg')" role="button" aria-pressed="true" tabindex="0" onkeydown="if(event.key==='Enter')setDiet('nonveg')">
-                <i class="fa-solid fa-drumstick-bite text-xs"></i> Chicken
-            </div>
-            <div class="diet-pill diet-pill-off" id="diet-btn-eggitarian" onclick="setDiet('eggitarian')" role="button" aria-pressed="false" tabindex="0" onkeydown="if(event.key==='Enter')setDiet('eggitarian')">
-                <i class="fa-solid fa-egg text-xs"></i> Eggitarian
-            </div>
-            <div class="diet-pill diet-pill-off" id="diet-btn-vegetarian" onclick="setDiet('vegetarian')" role="button" aria-pressed="false" tabindex="0" onkeydown="if(event.key==='Enter')setDiet('vegetarian')">
-                <i class="fa-solid fa-seedling text-xs"></i> Vegetarian
-            </div>
-            <span id="diet-summary" class="text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-3 py-1.5 rounded-md ml-1 font-semibold">Chicken + Egg + Veg Meals</span>
-        </div>
+    <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-green-700 font-semibold text-xs uppercase tracking-widest block mb-2">This Week's Menu</span>
+        <h2 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">Chef-Crafted. Macro-Balanced.</h2>
+        <p class="text-gray-400 mt-2 text-sm">Every meal hits 30–35g protein. Scroll to explore →</p>
+    </div>
 
-        <!-- Horizontal scroll meal cards -->
-        <div class="meal-scroll" id="meal-scroll-container" role="region" aria-label="Meal cards">
-            <!-- JS renders here -->
+    <!-- Diet Profile Toggle -->
+    <div class="flex items-center justify-center gap-2 flex-wrap mb-10">
+        <div class="diet-pill diet-pill-on" id="diet-btn-nonveg" onclick="setDiet('nonveg')" role="button" aria-pressed="true" tabindex="0" onkeydown="if(event.key==='Enter')setDiet('nonveg')">
+            <i class="fa-solid fa-drumstick-bite text-xs"></i> Non-Vegetarian
         </div>
+        <div class="diet-pill diet-pill-off" id="diet-btn-eggitarian" onclick="setDiet('eggitarian')" role="button" aria-pressed="false" tabindex="0" onkeydown="if(event.key==='Enter')setDiet('eggitarian')">
+            <i class="fa-solid fa-egg text-xs"></i> Eggitarian
+        </div>
+        <div class="diet-pill diet-pill-off" id="diet-btn-vegetarian" onclick="setDiet('vegetarian')" role="button" aria-pressed="false" tabindex="0" onkeydown="if(event.key==='Enter')setDiet('vegetarian')">
+            <i class="fa-solid fa-seedling text-xs"></i> Vegetarian
+        </div>
+        <span id="diet-summary" class="text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-3 py-1.5 rounded-md ml-1 font-semibold">Non-Vegetarian Meals Only</span>
+    </div>
 
-        <!-- Standards Strip -->
-        <div class="mt-10 bg-gray-900 text-gray-100 rounded-xl py-4 px-6 flex flex-wrap justify-center items-center gap-y-3 gap-x-6">
-            <div class="flex items-center gap-2 text-xs font-medium text-gray-300">
-                <i class="fa-solid fa-ban text-red-400 text-[10px]"></i>
-                Zero refined seed oils
-            </div>
-            <span class="text-gray-700 hidden sm:inline text-xs">·</span>
-            <div class="flex items-center gap-2 text-xs font-medium text-gray-300">
-                <i class="fa-solid fa-ban text-red-400 text-[10px]"></i>
-                No artificial colours or MSG
-            </div>
-            <span class="text-gray-700 hidden sm:inline text-xs">·</span>
-            <div class="flex items-center gap-2 text-xs font-medium text-gray-300">
-                <i class="fa-solid fa-check text-green-400 text-[10px]"></i>
-                Cold-pressed coconut oil only
-            </div>
-            <span class="text-gray-700 hidden sm:inline text-xs">·</span>
-            <div class="flex items-center gap-2 text-xs font-medium text-gray-300">
-                <i class="fa-solid fa-check text-green-400 text-[10px]"></i>
-                Sea salt, measured
-            </div>
-            <span class="text-gray-700 hidden sm:inline text-xs">·</span>
-            <div class="flex items-center gap-2 text-xs font-medium text-gray-300">
-                <i class="fa-solid fa-check text-green-400 text-[10px]"></i>
-                Slow-digesting performance carbs
-            </div>
+    <!-- Horizontal scroll meal cards -->
+    <div class="meal-scroll" id="meal-scroll-container" role="region" aria-label="Meal cards">
+        <!-- JS renders here -->
+    </div>
+
+    <!-- Standards Strip -->
+    <div class="mt-10 bg-gray-900 text-gray-100 rounded-xl py-4 px-6 flex flex-wrap justify-center items-center gap-y-3 gap-x-6">
+        <div class="flex items-center gap-2 text-xs font-medium text-gray-300">
+            <i class="fa-solid fa-ban text-red-400 text-[10px]"></i>
+            Zero refined seed oils
+        </div>
+        <span class="text-gray-700 hidden sm:inline text-xs">·</span>
+        <div class="flex items-center gap-2 text-xs font-medium text-gray-300">
+            <i class="fa-solid fa-ban text-red-400 text-[10px]"></i>
+            No artificial colours or MSG
+        </div>
+        <span class="text-gray-700 hidden sm:inline text-xs">·</span>
+        <div class="flex items-center gap-2 text-xs font-medium text-gray-300">
+            <i class="fa-solid fa-check text-green-400 text-[10px]"></i>
+            Cold-pressed coconut oil only
+        </div>
+        <span class="text-gray-700 hidden sm:inline text-xs">·</span>
+        <div class="flex items-center gap-2 text-xs font-medium text-gray-300">
+            <i class="fa-solid fa-check text-green-400 text-[10px]"></i>
+            Sea salt, measured
+        </div>
+        <span class="text-gray-700 hidden sm:inline text-xs">·</span>
+        <div class="flex items-center gap-2 text-xs font-medium text-gray-300">
+            <i class="fa-solid fa-check text-green-400 text-[10px]"></i>
+            Slow-digesting performance carbs
         </div>
     </div>
+</div>
+
 </section>
 
-<!-- ===== SUBSCRIPTION PLANS ===== -->
+
+<!-- = SUBSCRIPTION PLANS = -->
+
 <section class="py-16 bg-gray-50 scroll-mt-20 border-b border-gray-200" id="plans">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="text-center max-w-2xl mx-auto mb-3">
             <span class="text-green-700 font-semibold text-xs uppercase tracking-widest block mb-2">Subscription Plans</span>
-            <h2 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">Weekly Meal Prep Plans</h2>
+            <h2 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">Meal Prep Plans</h2>
             <p class="text-gray-400 mt-2 text-sm">Delivered 6 days a week, Monday–Saturday.</p>
         </div>
 
-        <div class="flex overflow-x-auto gap-5 pb-4 pt-8 snap-x snap-mandatory px-1 md:justify-center" style="scrollbar-width:thin;">
 
-            <!-- Plan 1: 1 Bowl/Day -->
-            <div class="min-w-[280px] sm:min-w-[300px] lg:min-w-[320px] lg:max-w-[340px] bg-white rounded-2xl p-7 border border-gray-200 flex flex-col justify-between snap-start">
-                <div>
-                    <div class="mb-5">
-                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Starter</div>
-                        <h3 class="text-xl font-black text-gray-900">1 Bowl / Day</h3>
-                        <p class="text-gray-400 text-xs mt-1.5 leading-relaxed">Your daily high-protein post-workout fuel. One precision-built meal to anchor your macros.</p>
-                    </div>
-                    <div class="py-5 border-y border-gray-100 mb-5">
-                        <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Weekly</div>
-                        <div class="flex items-baseline gap-2">
-                            <span class="text-3xl font-black text-gray-900">₹1,305</span>
-                            <span class="text-gray-400 text-sm">/week</span>
-                        </div>
-                        <div class="text-[11px] text-gray-400 mt-1">Meals ₹1,125 + Delivery ₹180</div>
-                        <div class="inline-flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2">
-                            <i class="fa-solid fa-tag text-[9px]"></i> Monthly plan saves ₹720 — see details
-                        </div>
-                    </div>
-                    <ul class="space-y-2.5 text-gray-500 text-xs mb-6">
-                        <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> 6 delivery days per week (Mon–Sat)</li>
-                        <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> Macro card with every meal</li>
-                        <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> Microwave-safe food-grade packaging</li>
-                    </ul>
-                </div>
-                <button onclick="openPlanDetail('1 Bowl A Day')" class="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-lg text-sm transition-all">
-                    <i class="fa-solid fa-circle-info text-green-400"></i> Know What's Included
-                </button>
-            </div>
+    <div class="flex overflow-x-auto gap-5 pb-4 pt-8 snap-x snap-mandatory px-1 md:justify-center" style="scrollbar-width:thin;">
 
-            <!-- Plan 2: 2 Bowls/Day (featured) -->
-            <div class="min-w-[280px] sm:min-w-[300px] lg:min-w-[320px] lg:max-w-[340px] bg-white rounded-2xl p-7 border-2 border-green-700 flex flex-col justify-between relative snap-start featured-plan">
-                <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-green-700 text-white text-[10px] font-bold uppercase py-1 px-4 rounded-full tracking-wider whitespace-nowrap">Trainer Recommended</div>
-                <div>
-                    <div class="mb-5">
-                        <div class="text-xs font-semibold text-green-600 uppercase tracking-widest mb-1">Most Popular</div>
-                        <h3 class="text-xl font-black text-gray-900">2 Bowls / Day</h3>
-                        <p class="text-gray-500 text-xs mt-1.5 leading-relaxed">Ideal for serious athletes. Replaces lunch & dinner for complete macro control without any cooking.</p>
-                    </div>
-                    <div class="py-5 border-y border-gray-100 mb-5">
-                        <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Weekly</div>
-                        <div class="flex items-baseline gap-2">
-                            <span class="text-3xl font-black text-gray-900">₹2,610</span>
-                            <span class="text-gray-400 text-sm">/week</span>
-                        </div>
-                        <div class="text-[11px] text-gray-500 mt-1">Meals ₹2,250 + Delivery ₹360</div>
-                        <div class="inline-flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2">
-                            <i class="fa-solid fa-tag text-[9px]"></i> Monthly plan saves ₹1,440 — see details
-                        </div>
-                    </div>
-                    <ul class="space-y-2.5 text-gray-600 text-xs mb-6">
-                        <li class="flex items-center gap-2.5 font-medium"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> 6 delivery days per week (Mon–Sat)</li>
-                        <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> Best for shred & lean bulk</li>
-                        <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> Delivery shared across 2 bowls — better value than 2 × 1-bowl plans</li>
-                    </ul>
+        <!-- Trial Plan -->
+        <div class="min-w-[280px] sm:min-w-[300px] lg:min-w-[300px] lg:max-w-[310px] bg-white rounded-2xl p-7 border border-gray-200 flex flex-col justify-between snap-start relative">
+            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gray-700 text-white text-[10px] font-bold uppercase py-1 px-4 rounded-full tracking-wider whitespace-nowrap">Try Before You Subscribe</div>
+            <div>
+                <div class="mb-5">
+                    <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Trial</div>
+                    <h3 class="text-xl font-black text-gray-900">Trial Meal</h3>
+                    <p class="text-gray-400 text-xs mt-1.5 leading-relaxed">One meal to experience the quality firsthand. No commitment, no subscription required.</p>
                 </div>
-                <button onclick="openPlanDetail('2 Bowls A Day')" class="w-full flex items-center justify-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold py-3.5 rounded-lg text-sm transition-all">
-                    <i class="fa-solid fa-circle-info"></i> Know What's Included
-                </button>
+                <div class="py-5 border-y border-gray-100 mb-5">
+                    <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">One-Time</div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-3xl font-black text-gray-900">₹149</span>
+                    </div>
+                    <div class="inline-flex items-center gap-1 bg-gray-50 text-gray-500 border border-gray-200 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2">
+                        <i class="fa-solid fa-bolt text-[9px]"></i> Single delivery, no lock-in
+                    </div>
+                </div>
+                <ul class="space-y-2.5 text-gray-500 text-xs mb-6">
+                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> 1 high-protein meal, delivered once</li>
+                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> Choose your preferred diet type</li>
+                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> Choose your delivery slot</li>
+                </ul>
             </div>
+            <button onclick="openPlanDetail('Trial Meal')" class="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-lg text-sm transition-all">
+                <svg class="bell-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a1 1 0 0 1 1 1v1.09A8 8 0 0 1 20 12v5h1a1 1 0 1 1 0 2H3a1 1 0 1 1 0-2h1v-5a8 8 0 0 1 7-7.91V3a1 1 0 0 1 1-1zm0 19a2 2 0 0 1-1.995-1.85L10 19h4a2 2 0 0 1-2 2z"/></svg> Order Now
+            </button>
+        </div>
 
-            <!-- Plan 3: 3 Bowls/Day -->
-            <div class="min-w-[280px] sm:min-w-[300px] lg:min-w-[320px] lg:max-w-[340px] bg-white rounded-2xl p-7 border border-gray-200 flex flex-col justify-between snap-start">
-                <div>
-                    <div class="mb-5">
-                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Complete</div>
-                        <h3 class="text-xl font-black text-gray-900">3 Bowls / Day</h3>
-                        <p class="text-gray-400 text-xs mt-1.5 leading-relaxed">Total diet takeover. Breakfast, lunch, and dinner — fully handled, perfectly portioned.</p>
-                    </div>
-                    <div class="py-5 border-y border-gray-100 mb-5">
-                        <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Weekly</div>
-                        <div class="flex items-baseline gap-2">
-                            <span class="text-3xl font-black text-gray-900">₹3,915</span>
-                            <span class="text-gray-400 text-sm">/week</span>
-                        </div>
-                        <div class="text-[11px] text-gray-400 mt-1">Meals ₹3,375 + Delivery ₹540</div>
-                        <div class="inline-flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2">
-                            <i class="fa-solid fa-tag text-[9px]"></i> Monthly plan saves ₹2,160 — see details
-                        </div>
-                    </div>
-                    <ul class="space-y-2.5 text-gray-500 text-xs mb-6">
-                        <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> 6 delivery days per week (Mon–Sat)</li>
-                        <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> Complete diet management</li>
-                        <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> Priority delivery slot</li>
-                        <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> Free nutrition consultation</li>
-                        <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> Delivery shared across 3 bowls — best value per delivery</li>
-                    </ul>
+        <!-- Plan 1: 1 Bowl/Day -->
+        <div class="min-w-[280px] sm:min-w-[300px] lg:min-w-[320px] lg:max-w-[340px] bg-white rounded-2xl p-7 border border-gray-200 flex flex-col justify-between snap-start">
+            <div>
+                <div class="mb-5">
+                    <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Starter</div>
+                    <h3 class="text-xl font-black text-gray-900">1 Bowl / Day</h3>
+                    <p class="text-gray-400 text-xs mt-1.5 leading-relaxed">Your daily high-protein post-workout fuel. One precision-built meal to anchor your macros.</p>
                 </div>
-                <button onclick="openPlanDetail('3 Bowls A Day')" class="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-lg text-sm transition-all">
-                    <i class="fa-solid fa-circle-info text-green-400"></i> Know What's Included
-                </button>
+                <div class="py-5 border-y border-gray-100 mb-5">
+                    <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Weekly</div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-3xl font-black text-gray-900">₹1,125</span>
+                        <span class="text-gray-400 text-sm">/week</span>
+                    </div>
+                </div>
+                <ul class="space-y-2.5 text-gray-500 text-xs mb-6">
+                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> 6 delivery days per week (Mon–Sat)</li>
+                </ul>
             </div>
+            <button onclick="openPlanDetail('1 Bowl A Day')" class="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-lg text-sm transition-all">
+                <svg class="bell-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a1 1 0 0 1 1 1v1.09A8 8 0 0 1 20 12v5h1a1 1 0 1 1 0 2H3a1 1 0 1 1 0-2h1v-5a8 8 0 0 1 7-7.91V3a1 1 0 0 1 1-1zm0 19a2 2 0 0 1-1.995-1.85L10 19h4a2 2 0 0 1-2 2z"/></svg> Get Started
+            </button>
+        </div>
+
+        <!-- Plan 2: 2 Bowls/Day (featured) -->
+        <div class="min-w-[280px] sm:min-w-[300px] lg:min-w-[320px] lg:max-w-[340px] bg-white rounded-2xl p-7 border-2 border-green-700 flex flex-col justify-between relative snap-start featured-plan">
+            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-green-700 text-white text-[10px] font-bold uppercase py-1 px-4 rounded-full tracking-wider whitespace-nowrap">Trainer Recommended</div>
+            <div>
+                <div class="mb-5">
+                    <div class="text-xs font-semibold text-green-600 uppercase tracking-widest mb-1">Most Popular</div>
+                    <h3 class="text-xl font-black text-gray-900">2 Bowls / Day</h3>
+                    <p class="text-gray-500 text-xs mt-1.5 leading-relaxed">Ideal for serious athletes. Replaces lunch & dinner for complete macro control without any cooking.</p>
+                </div>
+                <div class="py-5 border-y border-gray-100 mb-5">
+                    <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Weekly</div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-3xl font-black text-gray-900">₹2,250</span>
+                        <span class="text-gray-400 text-sm">/week</span>
+                    </div>
+                </div>
+                <ul class="space-y-2.5 text-gray-600 text-xs mb-6">
+                    <li class="flex items-center gap-2.5 font-medium"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> 6 delivery days per week (Mon–Sat)</li>
+                </ul>
+            </div>
+            <button onclick="openPlanDetail('2 Bowls A Day')" class="w-full flex items-center justify-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold py-3.5 rounded-lg text-sm transition-all">
+                <svg class="bell-icon" style="color:#fde68a" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a1 1 0 0 1 1 1v1.09A8 8 0 0 1 20 12v5h1a1 1 0 1 1 0 2H3a1 1 0 1 1 0-2h1v-5a8 8 0 0 1 7-7.91V3a1 1 0 0 1 1-1zm0 19a2 2 0 0 1-1.995-1.85L10 19h4a2 2 0 0 1-2 2z"/></svg> Get Started
+            </button>
+        </div>
+
+        <!-- Plan 3: 3 Bowls/Day -->
+        <div class="min-w-[280px] sm:min-w-[300px] lg:min-w-[320px] lg:max-w-[340px] bg-white rounded-2xl p-7 border border-gray-200 flex flex-col justify-between snap-start">
+            <div>
+                <div class="mb-5">
+                    <div class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Complete</div>
+                    <h3 class="text-xl font-black text-gray-900">3 Bowls / Day</h3>
+                    <p class="text-gray-400 text-xs mt-1.5 leading-relaxed">Total diet takeover. Breakfast, lunch, and dinner — fully handled, perfectly portioned.</p>
+                </div>
+                <div class="py-5 border-y border-gray-100 mb-5">
+                    <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Weekly</div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-3xl font-black text-gray-900">₹3,375</span>
+                        <span class="text-gray-400 text-sm">/week</span>
+                    </div>
+                </div>
+                <ul class="space-y-2.5 text-gray-500 text-xs mb-6">
+                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-green-600 text-[10px]"></i> 6 delivery days per week (Mon–Sat)</li>
+                </ul>
+            </div>
+            <button onclick="openPlanDetail('3 Bowls A Day')" class="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-lg text-sm transition-all">
+                <svg class="bell-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a1 1 0 0 1 1 1v1.09A8 8 0 0 1 20 12v5h1a1 1 0 1 1 0 2H3a1 1 0 1 1 0-2h1v-5a8 8 0 0 1 7-7.91V3a1 1 0 0 1 1-1zm0 19a2 2 0 0 1-1.995-1.85L10 19h4a2 2 0 0 1-2 2z"/></svg> Get Started
+            </button>
         </div>
     </div>
+</div>
+
 </section>
 
-<!-- ===== MACRO CALCULATOR ===== -->
+
+<!-- = MACRO CALCULATOR = -->
+
 <section class="py-16 bg-white scroll-mt-20 border-b border-gray-200" id="estimator">
     <div class="max-w-4xl mx-auto px-4 sm:px-6">
         <div class="text-center max-w-2xl mx-auto mb-10">
@@ -440,7 +510,9 @@
     </div>
 </section>
 
+
 <!-- WHY IT MATTERS -->
+
 <section class="py-16 bg-gray-50 scroll-mt-20 border-b border-gray-200" id="comparison">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="text-center max-w-2xl mx-auto mb-12">
@@ -487,7 +559,7 @@
                 <ul class="space-y-4 text-xs text-gray-600">
                     <li class="flex items-start gap-3">
                         <i class="fa-solid fa-check text-green-600 mt-0.5 shrink-0"></i>
-                        <span><strong class="text-gray-800 font-semibold">Guaranteed 45–50g protein.</strong> Every meal is built around a verified target — no guessing, no under-eating.</span>
+                        <span><strong class="text-gray-800 font-semibold">Guaranteed 30–35g protein.</strong> Every meal is built around a verified target — no guessing, no under-eating.</span>
                     </li>
                     <li class="flex items-start gap-3">
                         <i class="fa-solid fa-check text-green-600 mt-0.5 shrink-0"></i>
@@ -503,7 +575,9 @@
     </div>
 </section>
 
+
 <!-- CLEAN SOURCING STANDARDS -->
+
 <section class="py-16 bg-white border-b border-gray-200" id="benefits">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="text-center max-w-2xl mx-auto mb-12">
@@ -526,7 +600,7 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-bold text-gray-900 mb-1">Raw-Weighed Macros</h3>
-                    <p class="text-gray-400 text-xs leading-relaxed">Every protein source is weighed raw before cooking — the 45–50g protein figure is verified, not estimated.</p>
+                    <p class="text-gray-400 text-xs leading-relaxed">Every protein source is weighed raw before cooking — the 30–35g protein figure is verified, not estimated.</p>
                 </div>
             </div>
             <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 flex flex-col gap-4">
@@ -535,7 +609,7 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-bold text-gray-900 mb-1">Segregated Cook Lines</h3>
-                    <p class="text-gray-400 text-xs leading-relaxed">Separate utensils and prep stations for veg, egg, and non-veg orders. Your dietary preferences are fully respected.</p>
+                    <p class="text-gray-400 text-xs leading-relaxed">Separate utensils and prep stations for Vegetarian, Eggitarian, and Non-Vegetarian orders. Your dietary preferences are fully respected.</p>
                 </div>
             </div>
             <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 flex flex-col gap-4">
@@ -551,7 +625,9 @@
     </div>
 </section>
 
+
 <!-- FAQ -->
+
 <section class="py-16 bg-gray-50 scroll-mt-20" id="faq">
     <div class="max-w-3xl mx-auto px-4 sm:px-6">
         <div class="text-center mb-12">
@@ -561,31 +637,31 @@
         <div class="space-y-2">
             <details class="bg-white rounded-xl border border-gray-200 px-5 py-4 cursor-pointer group">
                 <summary class="flex justify-between items-center font-semibold text-gray-900 text-sm list-none">
-                    <span>Do all meals really have 45–50g protein?</span>
+                    <span>Do all meals really have 30–35g protein?</span>
                     <i class="fa-solid fa-plus transition-transform group-open:rotate-45 text-gray-400 text-xs shrink-0 ml-3"></i>
                 </summary>
-                <p class="mt-3 text-gray-500 text-sm leading-relaxed">Yes. Every recipe is designed around 45–50g of protein from raw-weighed sources. The macro card with each delivery shows the exact breakdown. We don't estimate — we weigh.</p>
+                <p class="mt-3 text-gray-500 text-sm leading-relaxed">Yes. Every recipe is designed around 30–35g of protein from raw-weighed sources. We don't estimate — we weigh.</p>
             </details>
             <details class="bg-white rounded-xl border border-gray-200 px-5 py-4 cursor-pointer group">
                 <summary class="flex justify-between items-center font-semibold text-gray-900 text-sm list-none">
-                    <span>What does the Chicken + Egg + Veg plan include?</span>
+                    <span>What does the Non-Vegetarian plan include?</span>
                     <i class="fa-solid fa-plus transition-transform group-open:rotate-45 text-gray-400 text-xs shrink-0 ml-3"></i>
                 </summary>
                 <p class="mt-3 text-gray-500 text-sm leading-relaxed">A mix of chicken, egg, and vegetarian meals through the week, giving you the widest variety while still hitting your protein target every time.</p>
             </details>
             <details class="bg-white rounded-xl border border-gray-200 px-5 py-4 cursor-pointer group">
                 <summary class="flex justify-between items-center font-semibold text-gray-900 text-sm list-none">
-                    <span>What's in the Egg + Veg plan?</span>
+                    <span>What's in the Eggitarian plan?</span>
                     <i class="fa-solid fa-plus transition-transform group-open:rotate-45 text-gray-400 text-xs shrink-0 ml-3"></i>
                 </summary>
                 <p class="mt-3 text-gray-500 text-sm leading-relaxed">Egg-based and vegetarian meals only — no chicken. Protein comes from egg whites, whole eggs, and paneer, with legume-based meals for fibre and variety.</p>
             </details>
             <details class="bg-white rounded-xl border border-gray-200 px-5 py-4 cursor-pointer group">
                 <summary class="flex justify-between items-center font-semibold text-gray-900 text-sm list-none">
-                    <span>What about the Veg Only plan?</span>
+                    <span>What about the Vegetarian plan?</span>
                     <i class="fa-solid fa-plus transition-transform group-open:rotate-45 text-gray-400 text-xs shrink-0 ml-3"></i>
                 </summary>
-                <p class="mt-3 text-gray-500 text-sm leading-relaxed">100% vegetarian. Protein comes from paneer, dal, rajma, chole, and moong — all weighed raw to hit the 45–50g protein target per meal.</p>
+                <p class="mt-3 text-gray-500 text-sm leading-relaxed">100% vegetarian. Protein comes from paneer, dal, rajma, chole, and moong — all weighed raw to hit the 30–35g protein target per meal.</p>
             </details>
             <details class="bg-white rounded-xl border border-gray-200 px-5 py-4 cursor-pointer group">
                 <summary class="flex justify-between items-center font-semibold text-gray-900 text-sm list-none">
@@ -612,7 +688,9 @@
     </div>
 </section>
 
+
 <!-- FOOTER -->
+
 <footer class="bg-gray-900 text-gray-400 py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -655,7 +733,9 @@
     </div>
 </footer>
 
-<!-- ===== PLAN DETAIL MODAL ===== -->
+
+<!-- = PLAN DETAIL MODAL = -->
+
 <div id="plan-detail-modal" class="plan-detail-modal hidden animate-fadeIn" role="dialog" aria-modal="true" aria-labelledby="plan-detail-heading">
     <div class="plan-detail-inner animate-slideUp shadow-2xl">
         <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
@@ -670,16 +750,20 @@
         <div class="px-6 py-6 space-y-6" id="plan-detail-body"></div>
         <div class="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-4 rounded-b-2xl">
             <button onclick="openSubFormFromModal()" class="w-full flex items-center justify-center gap-2.5 bg-green-700 hover:bg-green-800 text-white font-semibold py-4 rounded-xl text-sm transition-all">
-                <i class="fa-solid fa-location-dot text-lg"></i> Select Address &amp; Subscribe
+                <i class="fa-solid fa-location-dot text-lg"></i> Select Address
             </button>
             <button onclick="closePlanDetail()" class="mt-2 w-full text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors py-1.5">Go Back</button>
         </div>
     </div>
 </div>
 
-<!-- ===== SUBSCRIPTION FORM MODAL ===== -->
+
+<!-- = SUBSCRIPTION FORM MODAL (redesigned) = -->
+
 <div id="sub-form-modal" class="sub-form-modal hidden animate-fadeIn" role="dialog" aria-modal="true" aria-labelledby="sub-form-heading">
     <div class="sub-form-inner animate-slideUp shadow-2xl">
+
+        <!-- Header -->
         <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
             <div>
                 <h3 id="sub-form-heading" class="text-lg font-black text-gray-900">Subscribe to Lightweight Kitchen</h3>
@@ -690,149 +774,161 @@
             </button>
         </div>
 
-        <div class="px-6 py-6 space-y-7">
+        <div class="px-6 py-6 space-y-5">
 
-            <!-- Personal Details -->
-            <div>
-                <div class="sub-section-title">Personal Details</div>
+            <!-- ── 1. Your Details ── -->
+            <div class="sf-section">
+                <div class="sf-section-label"><i class="fa-solid fa-user"></i> Your Details</div>
                 <div class="space-y-4">
                     <div>
-                        <label class="sub-label" for="sf-name">Full Name</label>
-                        <input id="sf-name" name="name" type="text" class="sub-input" placeholder="e.g. Anjali Rao">
+                        <label class="sf-label" for="sf-name">Full Name</label>
+                        <input id="sf-name" name="name" type="text" class="sf-input" placeholder="e.g. Anjali Rao">
                     </div>
                     <div>
-                        <label class="sub-label" for="sf-mobile">Mobile Number</label>
-                        <input id="sf-mobile" name="mobile" type="tel" class="sub-input" placeholder="e.g. 98xxxxxxxx">
+                        <label class="sf-label" for="sf-mobile">Mobile Number</label>
+                        <input id="sf-mobile" name="mobile" type="tel" class="sf-input" placeholder="e.g. 98xxxxxxxx">
                     </div>
                 </div>
             </div>
 
-            <!-- Plan Details -->
-            <div>
-                <div class="sub-section-title">Plan Details</div>
-                <div class="space-y-4">
-                    <div>
-                        <label class="sub-label" for="sf-plan">Subscription Plan</label>
-                        <select id="sf-plan" name="plan" class="sub-input" onchange="onPlanChange()">
-                            <option value="1 Bowl A Day|weekly|1305">1 Bowl/Day — Weekly ₹1,305</option>
-                            <option value="1 Bowl A Day|monthly|4500">1 Bowl/Day — Monthly ₹4,500 (save ₹720, delivery free)</option>
-                            <option value="2 Bowls A Day|weekly|2610" selected>2 Bowls/Day — Weekly ₹2,610</option>
-                            <option value="2 Bowls A Day|monthly|9000">2 Bowls/Day — Monthly ₹9,000 (save ₹1,440, delivery free)</option>
-                            <option value="3 Bowls A Day|weekly|3915">3 Bowls/Day — Weekly ₹3,915</option>
-                            <option value="3 Bowls A Day|monthly|13500">3 Bowls/Day — Monthly ₹13,500 (save ₹2,160, delivery free)</option>
-                        </select>
+            <!-- ── 2. Plan ── -->
+            <div class="sf-section">
+                <div class="sf-section-label"><i class="fa-solid fa-bowl-food"></i> Plan & Frequency</div>
+                <label class="sf-label" for="sf-plan">Subscription Plan</label>
+                <select id="sf-plan" name="plan" class="sf-input" onchange="onPlanChange()">
+                    <option value="Trial Meal|trial|149">Trial Meal — One-Time ₹149</option>
+                    <option value="1 Bowl A Day|weekly|1305">1 Bowl/Day — Weekly ₹1,305</option>
+                    <option value="1 Bowl A Day|monthly|4500">1 Bowl/Day — Monthly ₹4,500 (save ₹720, delivery free)</option>
+                    <option value="2 Bowls A Day|weekly|2610" selected>2 Bowls/Day — Weekly ₹2,610</option>
+                    <option value="2 Bowls A Day|monthly|9000">2 Bowls/Day — Monthly ₹9,000 (save ₹1,440, delivery free)</option>
+                    <option value="3 Bowls A Day|weekly|3915">3 Bowls/Day — Weekly ₹3,915</option>
+                    <option value="3 Bowls A Day|monthly|13500">3 Bowls/Day — Monthly ₹13,500 (save ₹2,160, delivery free)</option>
+                </select>
+            </div>
+
+            <!-- ── 3. Delivery Slots ── -->
+            <div class="sf-section">
+                <div class="sf-section-label"><i class="fa-solid fa-clock"></i> Delivery Slot<span id="sf-slot-plural">s</span></div>
+                <p id="sf-slot-hint" class="text-xs text-gray-500 mb-3">Select <strong class="text-gray-800" id="sf-slot-count">2</strong> slots — one per bowl.</p>
+                <div class="space-y-2" id="sf-slot-group">
+                    <div class="slot-opt" data-value="7:30 AM – 9:30 AM" onclick="toggleSlot(this)">
+                        <div class="slot-icon"><i class="fa-solid fa-sun text-amber-500"></i></div>
+                        <div>
+                            <div class="text-sm font-bold text-gray-900">Morning</div>
+                            <div class="text-xs text-gray-400">7:30 AM – 9:30 AM</div>
+                        </div>
+                        <div class="slot-check"></div>
                     </div>
-                    <div>
-                        <label class="sub-label">Diet Preference</label>
-                        <div class="space-y-2" id="sf-diet-group">
-                            <div class="diet-radio-card diet-radio-on" data-value="Chicken + Egg + Veg" onclick="selectDiet(this)">
-                                <i class="fa-solid fa-drumstick-bite text-green-700 text-sm"></i>
-                                <div>
-                                    <div class="text-sm font-semibold text-gray-900">Chicken + Egg + Veg</div>
-                                    <div class="text-[11px] text-gray-400">Widest variety across the week</div>
-                                </div>
-                            </div>
-                            <div class="diet-radio-card" data-value="Egg + Veg" onclick="selectDiet(this)">
-                                <i class="fa-solid fa-egg text-green-700 text-sm"></i>
-                                <div>
-                                    <div class="text-sm font-semibold text-gray-900">Egg + Veg</div>
-                                    <div class="text-[11px] text-gray-400">No chicken, egg-based + vegetarian meals</div>
-                                </div>
-                            </div>
-                            <div class="diet-radio-card" data-value="Veg Only" onclick="selectDiet(this)">
-                                <i class="fa-solid fa-seedling text-green-700 text-sm"></i>
-                                <div>
-                                    <div class="text-sm font-semibold text-gray-900">Veg Only</div>
-                                    <div class="text-[11px] text-gray-400">100% vegetarian, every meal</div>
-                                </div>
+                    <div class="slot-opt" data-value="12:30 PM – 2:00 PM" onclick="toggleSlot(this)">
+                        <div class="slot-icon"><i class="fa-solid fa-cloud-sun text-orange-400"></i></div>
+                        <div>
+                            <div class="text-sm font-bold text-gray-900">Afternoon</div>
+                            <div class="text-xs text-gray-400">12:30 PM – 2:00 PM</div>
+                        </div>
+                        <div class="slot-check"></div>
+                    </div>
+                    <div class="slot-opt" data-value="6:45 PM – 9:00 PM" onclick="toggleSlot(this)">
+                        <div class="slot-icon"><i class="fa-solid fa-moon text-indigo-400"></i></div>
+                        <div>
+                            <div class="text-sm font-bold text-gray-900">Evening</div>
+                            <div class="text-xs text-gray-400">6:45 PM – 9:00 PM</div>
+                        </div>
+                        <div class="slot-check"></div>
+                    </div>
+                </div>
+                <p id="sf-slot-error" class="text-xs text-red-500 font-semibold mt-2 hidden"></p>
+            </div>
+
+            <!-- ── 4. Diet Preference ── -->
+            <div class="sf-section">
+                <div class="sf-section-label"><i class="fa-solid fa-leaf"></i> Diet Preference</div>
+
+                <!-- Mode toggle (only show for multi-bowl plans) -->
+                <div id="sf-diet-mode-wrap" class="mb-4">
+                    <label class="sf-label mb-2">How would you like to set your diet?</label>
+                    <div class="bg-gray-100 rounded-lg p-1 flex gap-1">
+                        <button type="button" data-mode="same"   class="diet-mode-tab mode-on"  onclick="selectDietMode('same')">Same for all bowls</button>
+                        <button type="button" data-mode="custom" class="diet-mode-tab mode-off" onclick="selectDietMode('custom')">Different per bowl</button>
+                    </div>
+                </div>
+
+                <!-- Same diet for all -->
+                <div id="sf-diet-same-wrap">
+                    <label class="sf-label mb-2">Choose your diet</label>
+                    <div class="space-y-2" id="sf-diet-group">
+                        <div class="diet-opt diet-opt-on" data-value="Non-Vegetarian" onclick="selectDiet(this)">
+                            <div class="diet-opt-radio"></div>
+                            <i class="fa-solid fa-drumstick-bite text-green-700 text-sm w-4 shrink-0"></i>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">Non-Vegetarian</div>
+                                <div class="text-xs text-gray-400 mt-0.5">Widest variety across the week</div>
                             </div>
                         </div>
-                        <input type="hidden" id="sf-diet-value" name="diet" value="Chicken + Egg + Veg">
+                        <div class="diet-opt" data-value="Eggitarian" onclick="selectDiet(this)">
+                            <div class="diet-opt-radio"></div>
+                            <i class="fa-solid fa-egg text-green-700 text-sm w-4 shrink-0"></i>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">Eggitarian</div>
+                                <div class="text-xs text-gray-400 mt-0.5">No chicken — egg-based & vegetarian only</div>
+                            </div>
+                        </div>
+                        <div class="diet-opt" data-value="Vegetarian" onclick="selectDiet(this)">
+                            <div class="diet-opt-radio"></div>
+                            <i class="fa-solid fa-seedling text-green-700 text-sm w-4 shrink-0"></i>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">Vegetarian</div>
+                                <div class="text-xs text-gray-400 mt-0.5">100% vegetarian, every meal</div>
+                            </div>
+                        </div>
                     </div>
+                    <input type="hidden" id="sf-diet-value" name="diet" value="Non-Vegetarian">
+                </div>
+
+                <!-- Per-bowl diet (shown in custom mode) -->
+                <div id="sf-diet-custom-wrap" class="hidden">
+                    <div class="space-y-3" id="sf-diet-perbowl-group"></div>
                 </div>
             </div>
 
-            <!-- Special Preferences -->
-            <div>
-                <div class="sub-section-title">Special Preferences</div>
-                <label class="sub-label">Specific days when only vegetarian meals are required <span class="text-gray-400 font-normal">(optional)</span></label>
-                <div class="flex gap-2 flex-wrap" id="sf-veg-days">
-                    <span class="day-chip" data-day="Mon" onclick="toggleDay(this)">Mon</span>
-                    <span class="day-chip" data-day="Tue" onclick="toggleDay(this)">Tue</span>
-                    <span class="day-chip" data-day="Wed" onclick="toggleDay(this)">Wed</span>
-                    <span class="day-chip" data-day="Thu" onclick="toggleDay(this)">Thu</span>
-                    <span class="day-chip" data-day="Fri" onclick="toggleDay(this)">Fri</span>
-                    <span class="day-chip" data-day="Sat" onclick="toggleDay(this)">Sat</span>
-                </div>
+            <!-- ── 5. Delivery Location ── -->
+            <div class="sf-section">
+                <div class="sf-section-label"><i class="fa-solid fa-location-dot"></i> Delivery Location<span id="sf-loc-plural">s</span></div>
+                <p id="sf-location-hint" class="text-xs text-gray-500 mb-3">Choose a delivery area for each bowl. Up to <span id="sf-location-max">2</span> location(s).</p>
+                <div class="space-y-3" id="sf-location-group"></div>
+                <p id="sf-location-error" class="text-xs text-red-500 font-semibold mt-2 hidden"></p>
             </div>
 
-            <!-- Delivery Slots -->
-            <div>
-                <div class="sub-section-title">Delivery Slot(s)</div>
-                <p id="sf-slot-hint" class="text-[11px] text-green-700 font-semibold mb-3">Select 2 slots for your 2 Bowls/Day plan</p>
-                <div class="space-y-2" id="sf-slot-group">
-                    <div class="slot-card" data-value="7:30 AM – 9:30 AM" onclick="toggleSlot(this)">
-                        <div class="text-sm font-semibold text-gray-900"><i class="fa-solid fa-sun text-green-600 text-xs mr-1.5"></i>7:30 AM – 9:30 AM</div>
-                    </div>
-                    <div class="slot-card" data-value="12:30 PM – 2:00 PM" onclick="toggleSlot(this)">
-                        <div class="text-sm font-semibold text-gray-900"><i class="fa-solid fa-cloud-sun text-green-600 text-xs mr-1.5"></i>12:30 PM – 2:00 PM</div>
-                    </div>
-                    <div class="slot-card" data-value="6:45 PM – 9:00 PM" onclick="toggleSlot(this)">
-                        <div class="text-sm font-semibold text-gray-900"><i class="fa-solid fa-moon text-green-600 text-xs mr-1.5"></i>6:45 PM – 9:00 PM</div>
+            <!-- ── 6. Special Preferences ── -->
+            <div class="sf-section" id="sf-special-section">
+                <div class="sf-section-label"><i class="fa-solid fa-seedling"></i> Special Preferences <span class="text-gray-400 font-normal normal-case tracking-normal text-[10px]">(optional)</span></div>
+                <div id="sf-vegdays-block">
+                    <label class="sf-label">Vegetarian-only days</label>
+                    <p class="text-xs text-gray-400 mb-3">If there are days when you'd prefer only veg meals, tap to select them.</p>
+                    <div class="flex gap-2 flex-wrap" id="sf-veg-days">
+                        <span class="veg-day" data-day="Mon" onclick="toggleDay(this)">Mon</span>
+                        <span class="veg-day" data-day="Tue" onclick="toggleDay(this)">Tue</span>
+                        <span class="veg-day" data-day="Wed" onclick="toggleDay(this)">Wed</span>
+                        <span class="veg-day" data-day="Thu" onclick="toggleDay(this)">Thu</span>
+                        <span class="veg-day" data-day="Fri" onclick="toggleDay(this)">Fri</span>
+                        <span class="veg-day" data-day="Sat" onclick="toggleDay(this)">Sat</span>
                     </div>
                 </div>
-                <p id="sf-slot-error" class="text-[11px] text-red-500 font-semibold mt-2 hidden"></p>
+                <p id="sf-vegdays-na" class="text-xs text-gray-400 italic hidden">Your plan is already fully Vegetarian, so this option isn't needed.</p>
             </div>
 
-            <!-- Location -->
-            <div>
-                <div class="sub-section-title">Location</div>
-                <label class="sub-label" for="sf-locality">Delivery Area / Locality</label>
-                <select id="sf-locality" name="locality" class="sub-input" onchange="onLocalityChange()">
-                    <option value="">Select your locality…</option>
-                    <option>Vijayanagar</option>
-                    <option>Kuvempunagar</option>
-                    <option>Hebbal</option>
-                    <option>Saraswathipuram</option>
-                    <option>Jayalakshmipuram</option>
-                    <option>Lakshmipuram</option>
-                    <option>Dattagalli</option>
-                    <option>Bogadi</option>
-                    <option>Yadavagiri</option>
-                    <option>Gokulam</option>
-                    <option>Ramakrishnanagar</option>
-                    <option>N.R. Mohalla</option>
-                    <option>Chamrajpura</option>
-                    <option>Mandi Mohalla</option>
-                    <option>Nazarbad</option>
-                    <option>Srirampura</option>
-                    <option>Bannimantap</option>
-                    <option>Metagalli</option>
-                    <option>Hootagalli</option>
-                    <option>Kesare</option>
-                    <option>J.P. Nagar</option>
-                    <option>Kumbarpet</option>
-                    <option>Devaraja Mohalla</option>
-                    <option>T.K. Layout</option>
-                    <option>Other</option>
-                </select>
-                <div id="sf-locality-other-wrap" class="mt-2 hidden">
-                    <input id="sf-locality-other" type="text" class="sub-input" placeholder="Type your locality…">
-                </div>
-            </div>
-
-            <!-- Additional Notes -->
-            <div>
-                <div class="sub-section-title">Additional Notes</div>
-                <label class="sub-label" for="sf-notes">Any allergies or special instructions <span class="text-gray-400 font-normal">(optional)</span></label>
-                <textarea id="sf-notes" name="notes" rows="3" class="sub-input resize-none" placeholder="e.g. Allergic to peanuts, please avoid spicy food"></textarea>
+            <!-- ── 7. Notes ── -->
+            <div class="sf-section">
+                <div class="sf-section-label"><i class="fa-solid fa-note-sticky"></i> Additional Notes <span class="text-gray-400 font-normal normal-case tracking-normal text-[10px]">(optional)</span></div>
+                <label class="sf-label" for="sf-notes">Allergies or special instructions</label>
+                <textarea id="sf-notes" name="notes" rows="3" class="sf-input resize-none" placeholder="e.g. Allergic to peanuts, extra spicy please…"></textarea>
             </div>
 
         </div>
 
         <!-- Submit CTA -->
         <div class="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-4 rounded-b-2xl">
-            <button type="button" onclick="handleSubFormSubmit()" id="sub-form-submit-btn" class="w-full flex items-center justify-center gap-2.5 bg-green-700 hover:bg-green-800 text-white font-semibold py-4 rounded-xl text-sm transition-all">
+            <button type="button" onclick="handleSubFormSubmit()" id="sub-form-submit-btn"
+                    class="w-full flex items-center justify-center gap-2.5 bg-green-700 hover:bg-green-800 text-white font-semibold py-4 rounded-xl text-sm transition-all">
                 <i class="fa-brands fa-whatsapp text-lg"></i> Submit &amp; Continue on WhatsApp
             </button>
             <button onclick="closeSubForm()" class="mt-2 w-full text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors py-1.5">Cancel</button>
@@ -840,23 +936,51 @@
     </div>
 </div>
 
-<!-- ===== JAVASCRIPT ===== -->
+
+<!-- = JAVASCRIPT = -->
+
 <script>
 var WA_NUMBER = '919880134847';
-var DIET_PROFILES = ['nonveg','eggitarian','vegetarian'];
-var DIET_LABELS = {
-    nonveg:     'Chicken + Egg + Veg Meals',
-    eggitarian: 'Egg + Veg Meals Only',
-    vegetarian: 'Veg Meals Only'
+
+// ── Delivery slot / bowl-label mapping ──────────────────────────────────────
+var SLOT_VALUES = ['7:30 AM – 9:30 AM', '12:30 PM – 2:00 PM', '6:45 PM – 9:00 PM'];
+var SLOT_LABEL_BY_VALUE = {
+    '7:30 AM – 9:30 AM':  'Morning',
+    '12:30 PM – 2:00 PM': 'Afternoon',
+    '6:45 PM – 9:00 PM':  'Evening'
 };
-var activeDiet = 'nonveg';
+var SLOT_ORDER = ['Morning', 'Afternoon', 'Evening'];
+
+function getOrderedSlotLabels() {
+    var labels = selectedSlots.map(function(v){ return SLOT_LABEL_BY_VALUE[v]; });
+    labels.sort(function(a, b){ return SLOT_ORDER.indexOf(a) - SLOT_ORDER.indexOf(b); });
+    return labels;
+}
+function getSlotValueByLabel(label) {
+    for (var v in SLOT_LABEL_BY_VALUE) { if (SLOT_LABEL_BY_VALUE[v] === label) return v; }
+    return '';
+}
+
+// ── Locality options ───────────────────────────────────────────────────────
+var LOCALITY_OPTIONS = [
+    'Vijayanagar','Kuvempunagar','Hebbal','Saraswathipuram','Jayalakshmipuram',
+    'Lakshmipuram','Dattagalli','Bogadi','Yadavagiri','Gokulam','Ramakrishnanagar',
+    'N.R. Mohalla','Chamrajpura','Mandi Mohalla','Nazarbad','Srirampura',
+    'Bannimantap','Metagalli','Hootagalli','Kesare','J.P. Nagar','Kumbarpet',
+    'Devaraja Mohalla','T.K. Layout'
+];
+
+var BOWL_DIET_OPTIONS = ['Non-Vegetarian Bowl', 'Eggitarian Bowl', 'Vegetarian Bowl'];
+
 var fitnessGoal = 'Cut';
 var weight = 70;
 var currentPlanDetail = '2 Bowls A Day';
-// Track selected frequency in the modal ('weekly' or 'monthly')
 var currentModalFreq = 'weekly';
 var selectedVegDays = [];
 var selectedSlots = [];
+var dietMode = 'same';
+var perBowlDiets = {};
+var deliveryLocations = {};
 
 var PLAN_PRICING = {
     '1 Bowl A Day':  { mealWeekly:1125, deliveryWeekly:180 },
@@ -865,6 +989,7 @@ var PLAN_PRICING = {
 };
 function getPricing(planName) {
     var p = PLAN_PRICING[planName];
+    if (!p) return null;
     var wkTotal  = p.mealWeekly + p.deliveryWeekly;
     var moMeal   = p.mealWeekly * 4;
     var moTotal  = moMeal;
@@ -874,18 +999,35 @@ function getPricing(planName) {
 }
 
 var planDetails = {
+    'Trial Meal': {
+        tier:'Trial', meals:1,
+        tagline:'One meal to experience the quality firsthand. No commitment, no subscription.',
+        weeklyDeliveries:1,
+        isTrial: true,
+        whatsIncluded:[
+            '1 high-protein meal, single delivery',
+            '30–35g protein, verified by weight',
+            'Choose your diet: Non-Vegetarian, Eggitarian, or Vegetarian',
+            'Choose your preferred delivery slot',
+            'Choose your delivery location'
+        ],
+        whatsNotIncluded:['Recurring subscription'],
+        faqs:[
+            { q:'Is this a one-time order?', a:'Yes — the Trial Meal is a single, no-commitment delivery so you can experience the food quality before subscribing.' }
+        ]
+    },
     '1 Bowl A Day': {
         tier:'Starter', meals:1,
         tagline:'One precision-built meal to anchor your daily macros.',
         weeklyDeliveries:6,
         whatsIncluded:[
             '1 high-protein meal, every delivery day',
-            '45–50g protein, verified by weight',
-            'Macro breakdown card with every delivery',
-            'Pick your diet: Chicken + Egg + Veg, Egg + Veg, or Veg Only',
-            '1 delivery slot to choose from'
+            '30–35g protein, verified by weight',
+            'Pick your diet: Non-Vegetarian, Eggitarian, or Vegetarian',
+            '1 delivery slot to choose from',
+            'Choose your preferred delivery location'
         ],
-        whatsNotIncluded:['Sunday delivery','Free nutrition consultation (3 Bowls plan only)','Priority delivery slot (3 Bowls plan only)'],
+        whatsNotIncluded:['Sunday delivery'],
         faqs:[
             { q:'Can I switch diet preference mid-week?', a:'Diet preference changes can be requested via WhatsApp with 24 hours notice.' },
             { q:'What if I want to skip a day?', a:"Just message us on WhatsApp before 8 PM the previous day and we'll skip your delivery." }
@@ -897,14 +1039,12 @@ var planDetails = {
         weeklyDeliveries:6,
         whatsIncluded:[
             '2 high-protein meals, every delivery day',
-            '45–50g protein per meal, verified by weight (90–100g/day)',
-            'Macro breakdown card with every delivery',
-            'Pick your diet: Chicken + Egg + Veg, Egg + Veg, or Veg Only',
+            '30–35g protein per meal, verified by weight (60–70g/day)',
+            'Pick your diet: same diet for both bowls, or a different diet for each bowl',
             'Choose 2 delivery slots — one per bowl',
-            'Best match for shred and lean bulk goals',
-            'Delivery shared across both bowls — better value than two 1-Bowl plans'
+            'Choose up to 2 delivery locations — one per bowl'
         ],
-        whatsNotIncluded:['Sunday delivery','Free nutrition consultation (3 Bowls plan only)','Priority delivery slot (3 Bowls plan only)'],
+        whatsNotIncluded:['Sunday delivery'],
         faqs:[
             { q:'Are both meals the same?', a:'No — each meal is a different recipe. The menu rotates weekly so you get variety across the week.' },
             { q:'Can I get both meals at the same time?', a:'Yes, you can choose a combined single-slot delivery or split between two slots.' }
@@ -916,18 +1056,15 @@ var planDetails = {
         weeklyDeliveries:6,
         whatsIncluded:[
             '3 high-protein meals, every delivery day',
-            '45–50g protein per meal, verified by weight (135–150g/day)',
-            'Macro breakdown card with every delivery',
-            'Pick your diet: Chicken + Egg + Veg, Egg + Veg, or Veg Only',
+            '30–35g protein per meal, verified by weight (90–105g/day)',
+            'Pick your diet: same diet for all bowls, or a different diet for each bowl',
             'Choose up to 3 delivery slots — one per bowl',
-            'Priority delivery slot',
-            'Free 1-on-1 nutrition consultation',
+            'Choose up to 3 delivery locations — one per bowl',
             'Zero cooking required — full diet handled'
         ],
         whatsNotIncluded:['Sunday delivery','Supplements or protein powders'],
         faqs:[
-            { q:'What are the three meal slots?', a:'Morning (7:30–9:30 AM), Afternoon (12:30–2:00 PM), and Evening (6:45–9:00 PM). You can customise slots on WhatsApp.' },
-            { q:'What does the nutrition consultation include?', a:'A 30-minute WhatsApp call with our nutrition advisor to align your meal plan with your fitness goals.' }
+            { q:'What are the three meal slots?', a:'Morning (7:30–9:30 AM), Afternoon (12:30–2:00 PM), and Evening (6:45–9:00 PM). You can customise slots on WhatsApp.' }
         ]
     }
 };
@@ -952,6 +1089,23 @@ function renderPricingCards() {
     var pr = getPricing(currentPlanDetail);
     var container = document.getElementById('modal-pricing-cards');
     if (!container) return;
+
+    if (!pr) {
+        // Trial plan pricing
+        container.innerHTML =
+            '<div class="pricing-opt-card pricing-opt-on">'
+          + '<div class="flex items-center justify-between mb-2">'
+          + '<span class="text-sm font-bold text-gray-900">One-Time Order</span>'
+          + '<span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-medium">No subscription</span>'
+          + '</div>'
+          + '<div class="space-y-1.5 text-xs text-gray-500">'
+          + '<div class="flex justify-between"><span>Meal</span><span class="font-semibold text-gray-700">₹149</span></div>'
+          + '<div class="flex justify-between"><span>Delivery</span><span class="font-semibold text-gray-700">₹30</span></div>'
+          + '<div class="flex justify-between border-t border-gray-100 pt-1.5 mt-1.5 font-bold text-gray-900 text-sm"><span>You Pay</span><span>₹179</span></div>'
+          + '</div>'
+          + '</div>';
+        return;
+    }
 
     if (currentModalFreq === 'weekly') {
         container.innerHTML =
@@ -993,7 +1147,7 @@ function selectPricingOpt(freq) {
 // ── Render plan detail modal ───────────────────────────────────────────────
 function openPlanDetail(planName) {
     currentPlanDetail = planName;
-    currentModalFreq = 'weekly'; // reset to weekly on open
+    currentModalFreq = 'weekly';
     var data = planDetails[planName];
     if (!data) return;
 
@@ -1006,29 +1160,31 @@ function openPlanDetail(planName) {
           + '<div class="text-[10px] font-semibold text-green-600 uppercase tracking-widest mb-1">'+data.tier+'</div>'
           + '<p class="text-gray-600 text-sm leading-relaxed">'+data.tagline+'</p>'
           + '<div class="grid grid-cols-2 gap-3 mt-4">'
-          + '<div class="bg-white rounded-lg p-3 border border-gray-200 text-center"><div class="text-xl font-black text-gray-900">'+data.meals+'</div><div class="text-[10px] text-gray-400 font-medium uppercase tracking-wide mt-0.5">Meals / Day</div></div>'
-          + '<div class="bg-white rounded-lg p-3 border border-gray-200 text-center"><div class="text-xl font-black text-gray-900">'+data.weeklyDeliveries+'</div><div class="text-[10px] text-gray-400 font-medium uppercase tracking-wide mt-0.5">Days / Week</div></div>'
+          + '<div class="bg-white rounded-lg p-3 border border-gray-200 text-center"><div class="text-xl font-black text-gray-900">'+data.meals+'</div><div class="text-[10px] text-gray-400 font-medium uppercase tracking-wide mt-0.5">Meals / Delivery</div></div>'
+          + '<div class="bg-white rounded-lg p-3 border border-gray-200 text-center"><div class="text-xl font-black text-gray-900">'+data.weeklyDeliveries+'</div><div class="text-[10px] text-gray-400 font-medium uppercase tracking-wide mt-0.5">'+(data.isTrial ? 'One-Time':'Days / Week')+'</div></div>'
           + '</div></div>';
 
-    // Delivery days
-    html += '<div><h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Delivery Days</h4><div class="flex gap-1.5 flex-wrap">';
-    ['Mon','Tue','Wed','Thu','Fri','Sat'].forEach(function(d){ html += '<span class="px-2.5 py-1 bg-green-50 text-green-700 border border-green-200 rounded text-xs font-semibold">'+d+'</span>'; });
-    html += '<span class="px-2.5 py-1 bg-gray-100 text-gray-400 border border-gray-200 rounded text-xs font-medium line-through">Sun</span></div>'
-          + '<p class="text-[11px] text-gray-400 mt-2">No delivery on Sundays.</p></div>';
+    // Delivery days (skip for trial)
+    if (!data.isTrial) {
+        html += '<div><h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Delivery Days</h4><div class="flex gap-1.5 flex-wrap">';
+        ['Mon','Tue','Wed','Thu','Fri','Sat'].forEach(function(d){ html += '<span class="px-2.5 py-1 bg-green-50 text-green-700 border border-green-200 rounded text-xs font-semibold">'+d+'</span>'; });
+        html += '<span class="px-2.5 py-1 bg-gray-100 text-gray-400 border border-gray-200 rounded text-xs font-medium line-through">Sun</span></div>'
+              + '<p class="text-[11px] text-gray-400 mt-2">No delivery on Sundays.</p></div>';
+    }
 
-    // Pricing section with toggle
+    // Pricing section
     html += '<div>'
           + '<div class="flex items-center justify-between mb-3">'
           + '<h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Pricing</h4>'
-          + '</div>'
-          // Toggle
-          + '<div class="bg-gray-100 rounded-lg p-1 flex gap-1 mb-4">'
-          + '<button id="modal-freq-weekly" class="freq-toggle-btn freq-on" onclick="setModalFreq(\'weekly\')">Weekly</button>'
-          + '<button id="modal-freq-monthly" class="freq-toggle-btn freq-off" onclick="setModalFreq(\'monthly\')">Monthly <span class="ml-1 text-green-400 text-[10px] font-bold">FREE delivery</span></button>'
-          + '</div>'
-          // Cards injected by JS
-          + '<div id="modal-pricing-cards"></div>'
           + '</div>';
+
+    if (!data.isTrial) {
+        html += '<div class="bg-gray-100 rounded-lg p-1 flex gap-1 mb-4">'
+              + '<button id="modal-freq-weekly" class="freq-toggle-btn freq-on" onclick="setModalFreq(\'weekly\')">Weekly</button>'
+              + '<button id="modal-freq-monthly" class="freq-toggle-btn freq-off" onclick="setModalFreq(\'monthly\')">Monthly <span class="ml-1 text-green-400 text-[10px] font-bold">FREE delivery</span></button>'
+              + '</div>';
+    }
+    html += '<div id="modal-pricing-cards"></div></div>';
 
     // What's included
     html += '<div><h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">What\'s Included</h4><ul class="space-y-2">';
@@ -1046,7 +1202,6 @@ function openPlanDetail(planName) {
     html += '</div></div>';
 
     document.getElementById('plan-detail-body').innerHTML = html;
-    // Render the pricing cards now that DOM is ready
     renderPricingCards();
 
     var modal = document.getElementById('plan-detail-modal');
@@ -1072,16 +1227,36 @@ function getPlanMealsCount() {
 
 function onPlanChange() {
     selectedSlots = [];
-    document.querySelectorAll('#sf-slot-group .slot-card').forEach(function(c){ c.classList.remove('slot-on'); });
+    perBowlDiets = {};
+    deliveryLocations = {};
+    document.querySelectorAll('#sf-slot-group .slot-opt').forEach(function(c){ c.classList.remove('slot-on'); });
     updateSlotHint();
+    updateLocationHint();
+    renderLocationSelectors();
+    if (dietMode === 'custom') renderPerBowlDietSelectors();
 }
 
 function updateSlotHint() {
     var n = getPlanMealsCount();
-    var hint = document.getElementById('sf-slot-hint');
-    var hints = { 1:'Select 1 slot for your 1 Bowl/Day plan', 2:'Select 2 slots for your 2 Bowls/Day plan', 3:'Select 3 slots for your 3 Bowls/Day plan' };
-    if (hint) hint.textContent = hints[n] || '';
+    var countEl = document.getElementById('sf-slot-count');
+    var pluralEl = document.getElementById('sf-slot-plural');
+    var hintEl = document.getElementById('sf-slot-hint');
+    if (countEl) countEl.textContent = n;
+    if (pluralEl) pluralEl.textContent = n === 1 ? '' : 's';
+    if (hintEl) {
+        if (n === 1) hintEl.innerHTML = 'Select <strong class="text-gray-800" id="sf-slot-count">1</strong> slot for your plan.';
+        else hintEl.innerHTML = 'Select <strong class="text-gray-800" id="sf-slot-count">'+n+'</strong> slots — one per bowl.';
+    }
     document.getElementById('sf-slot-error').classList.add('hidden');
+}
+
+function updateLocationHint() {
+    var n = getPlanMealsCount();
+    var maxEl = document.getElementById('sf-location-max');
+    var pluralEl = document.getElementById('sf-loc-plural');
+    if (maxEl) maxEl.textContent = String(n);
+    if (pluralEl) pluralEl.textContent = n === 1 ? '' : 's';
+    document.getElementById('sf-location-error').classList.add('hidden');
 }
 
 function toggleSlot(el) {
@@ -1091,40 +1266,128 @@ function toggleSlot(el) {
     if (idx !== -1) {
         selectedSlots.splice(idx, 1);
         el.classList.remove('slot-on');
+        delete perBowlDiets[SLOT_LABEL_BY_VALUE[val]];
+        delete deliveryLocations[SLOT_LABEL_BY_VALUE[val]];
     } else {
         if (selectedSlots.length >= n) {
             var oldest = selectedSlots.shift();
-            document.querySelectorAll('#sf-slot-group .slot-card').forEach(function(c){ if (c.getAttribute('data-value') === oldest) c.classList.remove('slot-on'); });
+            document.querySelectorAll('#sf-slot-group .slot-opt').forEach(function(c){ if (c.getAttribute('data-value') === oldest) c.classList.remove('slot-on'); });
+            delete perBowlDiets[SLOT_LABEL_BY_VALUE[oldest]];
+            delete deliveryLocations[SLOT_LABEL_BY_VALUE[oldest]];
         }
         selectedSlots.push(val);
         el.classList.add('slot-on');
     }
     document.getElementById('sf-slot-error').classList.add('hidden');
+    renderLocationSelectors();
+    if (dietMode === 'custom') renderPerBowlDietSelectors();
 }
 
-function onLocalityChange() {
-    var sel = document.getElementById('sf-locality');
-    var wrap = document.getElementById('sf-locality-other-wrap');
-    if (sel.value === 'Other') { wrap.classList.remove('hidden'); }
-    else { wrap.classList.add('hidden'); document.getElementById('sf-locality-other').value = ''; }
+// ── Diet mode ────────────────────────────────────────────────────────────────
+function selectDietMode(mode) {
+    dietMode = mode;
+    document.querySelectorAll('[data-mode]').forEach(function(btn) {
+        if (btn.classList.contains('diet-mode-tab')) {
+            btn.className = 'diet-mode-tab ' + (btn.getAttribute('data-mode') === mode ? 'mode-on' : 'mode-off');
+        }
+    });
+    document.getElementById('sf-diet-same-wrap').classList.toggle('hidden', mode !== 'same');
+    document.getElementById('sf-diet-custom-wrap').classList.toggle('hidden', mode !== 'custom');
+    if (mode === 'custom') renderPerBowlDietSelectors();
+    updateSpecialPreferencesVisibility();
 }
 
-// Opens the form, pre-filling plan+frequency from the modal selection
+function renderPerBowlDietSelectors() {
+    var container = document.getElementById('sf-diet-perbowl-group');
+    if (!container) return;
+    var labels = getOrderedSlotLabels();
+    if (!labels.length) {
+        container.innerHTML = '<p class="text-xs text-gray-400 italic bg-gray-100 p-3 rounded-lg">Select your delivery slots first, then pick a diet for each bowl here.</p>';
+        return;
+    }
+    var html = '';
+    labels.forEach(function(label){
+        var slotVal = getSlotValueByLabel(label);
+        if (!perBowlDiets[label]) perBowlDiets[label] = 'Non-Vegetarian Bowl';
+        html += '<div>'
+              + '<label class="sf-label">'+label+' bowl <span class="text-gray-400 font-normal text-[11px]">'+slotVal+'</span></label>'
+              + '<select class="sf-input" onchange="onPerBowlDietChange(\''+label+'\', this)">'
+              + BOWL_DIET_OPTIONS.map(function(opt){ return '<option'+(opt===perBowlDiets[label]?' selected':'')+'>'+opt+'</option>'; }).join('')
+              + '</select>'
+              + '</div>';
+    });
+    container.innerHTML = html;
+}
+
+function onPerBowlDietChange(label, el) {
+    perBowlDiets[label] = el.value;
+    updateSpecialPreferencesVisibility();
+}
+
+// ── Delivery location selectors ─────────────────────────────────────────────
+function renderLocationSelectors() {
+    var container = document.getElementById('sf-location-group');
+    if (!container) return;
+    var labels = getOrderedSlotLabels();
+    if (!labels.length) {
+        container.innerHTML = '<p class="text-xs text-gray-400 italic bg-gray-100 p-3 rounded-lg">Select your delivery slots above first.</p>';
+        return;
+    }
+    var html = '';
+    labels.forEach(function(label){
+        var slotVal = getSlotValueByLabel(label);
+        var current = deliveryLocations[label] || '';
+        var isOther = current && LOCALITY_OPTIONS.indexOf(current) === -1;
+        html += '<div class="sf-location-row">'
+              + '<div class="flex items-center gap-2 mb-2"><span class="sf-location-slot-tag">'+label+'</span><span class="text-[11px] text-gray-400">'+slotVal+'</span></div>'
+              + '<select class="sf-input" onchange="onLocationChange(\''+label+'\', this)">'
+              + '<option value=""'+(!current?' selected':'')+'>Select your locality…</option>'
+              + LOCALITY_OPTIONS.map(function(loc){ return '<option'+(loc===current?' selected':'')+'>'+loc+'</option>'; }).join('')
+              + '<option value="Other"'+(isOther?' selected':'')+'>Other (type below)</option>'
+              + '</select>'
+              + '<input type="text" class="sf-input mt-2'+(isOther?'':' hidden')+'" id="sf-location-other-'+label+'" placeholder="Type your locality…" value="'+(isOther?current:'')+'" onchange="onLocationOtherChange(\''+label+'\', this)">'
+              + '</div>';
+    });
+    container.innerHTML = html;
+    document.getElementById('sf-location-error').classList.add('hidden');
+}
+
+function onLocationChange(label, selectEl) {
+    var otherInput = document.getElementById('sf-location-other-' + label);
+    if (selectEl.value === 'Other') {
+        deliveryLocations[label] = otherInput && otherInput.value ? otherInput.value : '';
+        if (otherInput) { otherInput.classList.remove('hidden'); otherInput.value = ''; }
+    } else {
+        deliveryLocations[label] = selectEl.value;
+        if (otherInput) otherInput.classList.add('hidden');
+    }
+    document.getElementById('sf-location-error').classList.add('hidden');
+}
+
+function onLocationOtherChange(label, inputEl) {
+    deliveryLocations[label] = inputEl.value.trim();
+}
+
 function openSubFormFromModal() {
     var planSelect = document.getElementById('sf-plan');
     if (planSelect && currentPlanDetail) {
-        var freq = currentModalFreq; // 'weekly' or 'monthly'
-        var opts = planSelect.options;
-        for (var i = 0; i < opts.length; i++) {
-            if (opts[i].value.indexOf(currentPlanDetail) !== -1 && opts[i].value.indexOf(freq) !== -1) {
-                planSelect.selectedIndex = i;
-                break;
+        if (currentPlanDetail === 'Trial Meal') {
+            var opts2 = planSelect.options;
+            for (var j = 0; j < opts2.length; j++) {
+                if (opts2[j].value.indexOf('Trial Meal') !== -1) { planSelect.selectedIndex = j; break; }
+            }
+        } else {
+            var freq = currentModalFreq;
+            var opts = planSelect.options;
+            for (var i = 0; i < opts.length; i++) {
+                if (opts[i].value.indexOf(currentPlanDetail) !== -1 && opts[i].value.indexOf(freq) !== -1) {
+                    planSelect.selectedIndex = i;
+                    break;
+                }
             }
         }
     }
-    selectedSlots = [];
-    document.querySelectorAll('#sf-slot-group .slot-card').forEach(function(c){ c.classList.remove('slot-on'); });
-    updateSlotHint();
+    resetSubFormDynamicState();
     closePlanDetail();
     var modal = document.getElementById('sub-form-modal');
     modal.classList.remove('hidden');
@@ -1133,7 +1396,24 @@ function openSubFormFromModal() {
     if (inner) inner.scrollTop = 0;
 }
 
-// Legacy: called from macro calculator
+function resetSubFormDynamicState() {
+    selectedSlots = [];
+    perBowlDiets = {};
+    deliveryLocations = {};
+    dietMode = 'same';
+    document.querySelectorAll('#sf-slot-group .slot-opt').forEach(function(c){ c.classList.remove('slot-on'); });
+    // Reset diet mode tabs
+    document.querySelectorAll('.diet-mode-tab').forEach(function(btn){
+        btn.className = 'diet-mode-tab ' + (btn.getAttribute('data-mode') === 'same' ? 'mode-on' : 'mode-off');
+    });
+    document.getElementById('sf-diet-same-wrap').classList.remove('hidden');
+    document.getElementById('sf-diet-custom-wrap').classList.add('hidden');
+    updateSlotHint();
+    updateLocationHint();
+    renderLocationSelectors();
+    updateSpecialPreferencesVisibility();
+}
+
 function openSubForm() {
     currentModalFreq = 'weekly';
     openSubFormFromModal();
@@ -1145,45 +1425,93 @@ function closeSubForm() {
 }
 
 function selectDiet(el) {
-    document.querySelectorAll('#sf-diet-group .diet-radio-card').forEach(function(c){ c.classList.remove('diet-radio-on'); });
-    el.classList.add('diet-radio-on');
+    document.querySelectorAll('#sf-diet-group .diet-opt').forEach(function(c){ c.classList.remove('diet-opt-on'); });
+    el.classList.add('diet-opt-on');
     document.getElementById('sf-diet-value').value = el.getAttribute('data-value');
+    updateSpecialPreferencesVisibility();
+}
+
+// ── Conditional Special Preferences (hide Veg-Only-Days when diet is fully Vegetarian) ──
+function isFullyVegetarianSelection() {
+    if (dietMode === 'same') {
+        return document.getElementById('sf-diet-value').value === 'Vegetarian';
+    }
+    var labels = getOrderedSlotLabels();
+    if (!labels.length) return false;
+    return labels.every(function(label){ return perBowlDiets[label] === 'Vegetarian Bowl'; });
+}
+
+function updateSpecialPreferencesVisibility() {
+    var vegBlock = document.getElementById('sf-vegdays-block');
+    var naMsg = document.getElementById('sf-vegdays-na');
+    if (!vegBlock || !naMsg) return;
+    if (isFullyVegetarianSelection()) {
+        vegBlock.classList.add('hidden');
+        naMsg.classList.remove('hidden');
+    } else {
+        vegBlock.classList.remove('hidden');
+        naMsg.classList.add('hidden');
+    }
 }
 
 function toggleDay(el) {
     var day = el.getAttribute('data-day');
     var idx = selectedVegDays.indexOf(day);
-    if (idx === -1) { selectedVegDays.push(day); el.classList.add('day-chip-on'); }
-    else { selectedVegDays.splice(idx, 1); el.classList.remove('day-chip-on'); }
+    if (idx === -1) { selectedVegDays.push(day); el.classList.add('veg-day-on'); }
+    else { selectedVegDays.splice(idx, 1); el.classList.remove('veg-day-on'); }
+}
+
+function buildSubscriptionPayload(name, mobile, planName, planFreq, planPrice, vegDaysText, locality, notes, slotsText) {
+    var payload = {
+        name: name, mobile: mobile, plan: planName, frequency: planFreq,
+        price: Number(planPrice), vegOnlyDays: selectedVegDays.slice(),
+        slots: selectedSlots.slice(), notes: notes || ''
+    };
+    if (dietMode === 'same') {
+        payload.sameDiet = true;
+        payload.diet = document.getElementById('sf-diet-value').value;
+    } else {
+        payload.sameDiet = false;
+        payload.mealDiets = getOrderedSlotLabels().map(function(label){
+            return { slot: label, diet: perBowlDiets[label] };
+        });
+    }
+    payload.deliveryLocations = getOrderedSlotLabels().map(function(label){
+        return { slot: label, location: deliveryLocations[label] };
+    });
+    return payload;
 }
 
 function handleSubFormSubmit() {
     var nameEl   = document.getElementById('sf-name');
     var mobileEl = document.getElementById('sf-mobile');
-    var localSel = document.getElementById('sf-locality');
-    var localOther = document.getElementById('sf-locality-other');
-
     var name   = nameEl.value.trim();
     var mobile = mobileEl.value.trim();
     var planVal = document.getElementById('sf-plan').value;
     var parts = planVal.split('|');
     var planName = parts[0], planFreq = parts[1], planPrice = parts[2];
-    var diet     = document.getElementById('sf-diet-value').value;
-    var locality = localSel.value === 'Other' ? localOther.value.trim() : localSel.value;
     var notes    = document.getElementById('sf-notes').value.trim();
     var vegDaysText = selectedVegDays.length ? selectedVegDays.join(', ') : 'None specified';
     var n = getPlanMealsCount();
+    var labels = getOrderedSlotLabels();
 
     var missing = [];
     if (!name)     { missing.push(nameEl); nameEl.style.borderColor='#DC2626'; }
     if (!mobile || mobile.replace(/[^0-9]/g,'').length < 7) { missing.push(mobileEl); mobileEl.style.borderColor='#DC2626'; }
-    if (!locality) { localSel.style.borderColor='#DC2626'; missing.push(localSel); }
 
     if (selectedSlots.length < n) {
-        var errEl = document.getElementById('sf-slot-error');
-        errEl.textContent = 'Please select ' + n + ' delivery slot' + (n>1?'s':'') + '.';
-        errEl.classList.remove('hidden');
-        missing.push(errEl);
+        var slotErrEl = document.getElementById('sf-slot-error');
+        slotErrEl.textContent = 'Please select ' + n + ' delivery slot' + (n>1?'s':'') + '.';
+        slotErrEl.classList.remove('hidden');
+        missing.push(slotErrEl);
+    }
+
+    var locationsComplete = labels.length === n && labels.every(function(label){ return deliveryLocations[label]; });
+    if (!locationsComplete) {
+        var locErrEl = document.getElementById('sf-location-error');
+        locErrEl.textContent = 'Please choose a delivery location for each bowl.';
+        locErrEl.classList.remove('hidden');
+        missing.push(locErrEl);
     }
 
     if (missing.length) {
@@ -1193,14 +1521,32 @@ function handleSubFormSubmit() {
     }
 
     var slotsText = selectedSlots.join(', ');
+    var localitySummary = labels.map(function(label){ return deliveryLocations[label]; }).join(', ');
+    var payload = buildSubscriptionPayload(name, mobile, planName, planFreq, planPrice, vegDaysText, localitySummary, notes, slotsText);
+    console.log('Lightweight Kitchen subscription payload:', JSON.stringify(payload, null, 2));
+
+    var dietBlock;
+    if (dietMode === 'same') {
+        var dietVal = document.getElementById('sf-diet-value').value;
+        dietBlock = "\uD83E\uDD57 *Diet Preference:*\n" + dietVal + "\n(All Bowls)\n\n";
+    } else {
+        dietBlock = "\uD83E\uDD57 *Meal Preferences:*\n" + labels.map(function(label){
+            return label + "\n" + perBowlDiets[label];
+        }).join("\n\n") + "\n\n";
+    }
+
+    var locationBlock = "\uD83D\uDCCD *Delivery Locations:*\n" + labels.map(function(label){
+        return label + "\n" + deliveryLocations[label];
+    }).join("\n\n") + "\n\n";
+
     var msg = "Hi! I\u2019d like to subscribe to Lightweight Kitchen.\n\n"
             + "\uD83D\uDC64 *Name:* " + name + "\n"
             + "\uD83D\uDCF1 *Mobile:* " + mobile + "\n\n"
-            + "\uD83D\uDCCB *Plan:* " + planName + " (" + planFreq + ", \u20B9" + Number(planPrice).toLocaleString() + ")\n"
-            + "\uD83E\uDD57 *Diet Preference:* " + diet + "\n\n"
+            + "\uD83D\uDCCB *Plan:* " + planName + " (" + planFreq + ", \u20B9" + Number(planPrice).toLocaleString() + ")\n\n"
+            + dietBlock
             + "\uD83C\uDF31 *Veg-Only Days Requested:* " + vegDaysText + "\n\n"
             + "\u23F0 *Preferred Delivery Slot(s):* " + slotsText + "\n\n"
-            + "\uD83D\uDCCD *Delivery Area:* " + locality + "\n\n"
+            + locationBlock
             + "\uD83D\uDCDD *Additional Notes:* " + (notes || 'None') + "\n\n"
             + "Please share next steps!";
 
@@ -1218,56 +1564,48 @@ function triggerMacroPlanDetail() {
     openPlanDetail(plan);
 }
 
-// Modal backdrop click / escape
 document.getElementById('plan-detail-modal').addEventListener('click', function(e){ if (e.target===this) closePlanDetail(); });
 document.getElementById('sub-form-modal').addEventListener('click', function(e){ if (e.target===this) closeSubForm(); });
 document.addEventListener('keydown', function(e){ if (e.key==='Escape'){ closePlanDetail(); closeSubForm(); } });
 
-// ── Meal data ─────────────────────────────────────────────────────────────
-var meals = {
-    nonveg: [
-        { id:1,  emoji:'🍗', title:'Tandoori Chicken Power Bowl',      description:'Tandoor-spiced chicken breast with herbed grains and cucumber raita',  calories:490, protein_g:47, carbs_g:38, fat_g:14, fiber_g:4,  tags:['Chicken'] },
-        { id:2,  emoji:'🍗', title:'Slow-Simmered Chicken Curry Bowl', description:'Light onion-tomato chicken curry with fluffy ancient grains',          calories:500, protein_g:46, carbs_g:40, fat_g:16, fiber_g:5,  tags:['Chicken'] },
-        { id:3,  emoji:'🍗', title:'Grilled Chicken Performance Plate',description:'Marinated grilled chicken with creamy savoury grains',                 calories:510, protein_g:48, carbs_g:36, fat_g:17, fiber_g:4,  tags:['Chicken'] },
-        { id:4,  emoji:'🍗', title:'Chicken Breast Masala Bowl',       description:'Tikka-style breast in rich onion gravy with whole grains',             calories:495, protein_g:47, carbs_g:38, fat_g:15, fiber_g:5,  tags:['Chicken'] },
-        { id:5,  emoji:'🥚', title:'Egg White Protein Scramble',       description:'8-white spicy scramble with onions, tomato, chillies & grains',        calories:430, protein_g:45, carbs_g:34, fat_g:10, fiber_g:4,  tags:['Egg'] },
-        { id:6,  emoji:'🥚', title:'Whole Egg Power Scramble Bowl',    description:'Whole-egg scramble, caramelised onion, tomato & whole grains',         calories:460, protein_g:46, carbs_g:40, fat_g:13, fiber_g:5,  tags:['Egg'] },
-        { id:7,  emoji:'🥚', title:'Triple Egg Omelette Bowl',         description:'Folded omelette with bell peppers & a side of whole grains',           calories:455, protein_g:45, carbs_g:40, fat_g:12, fiber_g:5,  tags:['Egg'] },
-        { id:8,  emoji:'🥦', title:'Paneer Power Scramble Bowl',       description:'Low-fat paneer scramble, mild spices, whole grains',                   calories:470, protein_g:45, carbs_g:46, fat_g:16, fiber_g:5,  tags:['Veg'] },
-        { id:9,  emoji:'🥦', title:'Lentil Tadka Performance Bowl',    description:'Yellow lentil tadka, mixed vegetables, whole grains — protein boosted', calories:460, protein_g:45, carbs_g:52, fat_g:11, fiber_g:9,  tags:['Veg'] },
-        { id:10, emoji:'🥦', title:'Kidney Bean Recovery Bowl',        description:'Slow-cooked kidney bean curry with whole grains & fresh salad',         calories:480, protein_g:45, carbs_g:58, fat_g:11, fiber_g:10, tags:['Veg'] },
-        { id:11, emoji:'🥦', title:'Moong & Millet Harvest Bowl',      description:'Moong dal & millet medley with seasonal vegetables',                   calories:445, protein_g:45, carbs_g:54, fat_g:10, fiber_g:9,  tags:['Veg'] }
-    ],
-    eggitarian: [
-        { id:5,  emoji:'🥚', title:'Egg White Protein Scramble',       description:'8-white spicy scramble with onions, tomato, chillies & grains',        calories:430, protein_g:45, carbs_g:34, fat_g:10, fiber_g:4,  tags:['Egg'] },
-        { id:6,  emoji:'🥚', title:'Whole Egg Power Scramble Bowl',    description:'Whole-egg scramble, caramelised onion, tomato & whole grains',         calories:460, protein_g:46, carbs_g:40, fat_g:13, fiber_g:5,  tags:['Egg'] },
-        { id:7,  emoji:'🥚', title:'Triple Egg Omelette Bowl',         description:'Folded omelette with bell peppers & a side of whole grains',           calories:455, protein_g:45, carbs_g:40, fat_g:12, fiber_g:5,  tags:['Egg'] },
-        { id:8,  emoji:'🥦', title:'Paneer Power Scramble Bowl',       description:'Low-fat paneer scramble, mild spices, whole grains',                   calories:470, protein_g:45, carbs_g:46, fat_g:16, fiber_g:5,  tags:['Veg'] },
-        { id:9,  emoji:'🥦', title:'Lentil Tadka Performance Bowl',    description:'Yellow lentil tadka, mixed vegetables, whole grains — protein boosted', calories:460, protein_g:45, carbs_g:52, fat_g:11, fiber_g:9,  tags:['Veg'] },
-        { id:10, emoji:'🥦', title:'Chickpea Strength Bowl',           description:'Spiced chickpea curry with whole grains',                              calories:480, protein_g:45, carbs_g:60, fat_g:11, fiber_g:11, tags:['Veg'] },
-        { id:11, emoji:'🥦', title:'Kidney Bean Recovery Bowl',        description:'Slow-cooked kidney bean curry with whole grains & fresh salad',         calories:480, protein_g:45, carbs_g:58, fat_g:11, fiber_g:10, tags:['Veg'] }
-    ],
-    vegetarian: [
-        { id:8,  emoji:'🥦', title:'Paneer Power Scramble Bowl',       description:'Low-fat paneer scramble, mild spices, whole grains',                   calories:470, protein_g:45, carbs_g:46, fat_g:16, fiber_g:5,  tags:['Veg'] },
-        { id:9,  emoji:'🥦', title:'Lentil Tadka Performance Bowl',    description:'Yellow lentil tadka, mixed vegetables, whole grains — protein boosted', calories:460, protein_g:45, carbs_g:52, fat_g:11, fiber_g:9,  tags:['Veg'] },
-        { id:10, emoji:'🥦', title:'Chickpea Strength Bowl',           description:'Spiced chickpea curry with whole grains',                              calories:480, protein_g:45, carbs_g:60, fat_g:11, fiber_g:11, tags:['Veg'] },
-        { id:11, emoji:'🥦', title:'Kidney Bean Recovery Bowl',        description:'Slow-cooked kidney bean curry with whole grains',                      calories:480, protein_g:45, carbs_g:58, fat_g:11, fiber_g:10, tags:['Veg'] },
-        { id:12, emoji:'🥦', title:'Moong & Millet Harvest Bowl',      description:'Moong dal & millet medley with seasonal vegetables',                   calories:445, protein_g:45, carbs_g:54, fat_g:10, fiber_g:9,  tags:['Veg'] },
-        { id:13, emoji:'🥦', title:'Masoor Lentil Recovery Bowl',      description:'Pink lentil masoor dal with whole grains',                             calories:450, protein_g:45, carbs_g:56, fat_g:9,  fiber_g:10, tags:['Veg'] },
-        { id:14, emoji:'🥦', title:'Grilled Paneer Tikka Plate',       description:'Grilled paneer tikka with savoury whole grains',                       calories:465, protein_g:46, carbs_g:36, fat_g:17, fiber_g:5,  tags:['Veg'] }
-    ]
-};
+// ── Menu data ──────────────────────────────────────────────────────────────
+var MEALS = [
+    { id:1,  emoji:'🍗', title:'Tandoori Chicken Power Bowl',      description:'Tandoor-spiced chicken breast with herbed grains and cucumber raita',  calories:490, protein_g:32, carbs_g:38, fat_g:14, fiber_g:4,  tags:['Non-Vegetarian'] },
+    { id:2,  emoji:'🍗', title:'Slow-Simmered Chicken Curry Bowl', description:'Light onion-tomato chicken curry with fluffy ancient grains',          calories:500, protein_g:31, carbs_g:40, fat_g:16, fiber_g:5,  tags:['Non-Vegetarian'] },
+    { id:3,  emoji:'🍗', title:'Grilled Chicken Performance Plate',description:'Marinated grilled chicken with creamy savoury grains',                 calories:510, protein_g:33, carbs_g:36, fat_g:17, fiber_g:4,  tags:['Non-Vegetarian'] },
+    { id:4,  emoji:'🍗', title:'Chicken Breast Masala Bowl',       description:'Tikka-style breast in rich onion gravy with whole grains',             calories:495, protein_g:32, carbs_g:38, fat_g:15, fiber_g:5,  tags:['Non-Vegetarian'] },
+    { id:15, emoji:'🍗', title:'Peri-Peri Chicken Grain Bowl',     description:'Peri-peri marinated chicken with charred peppers and whole grains',    calories:505, protein_g:33, carbs_g:37, fat_g:16, fiber_g:4,  tags:['Non-Vegetarian'] },
+    { id:16, emoji:'🍗', title:'Pepper Chicken Stir-Fry Bowl',     description:'Black pepper chicken stir-fry with sautéed vegetables and grains',     calories:498, protein_g:32, carbs_g:39, fat_g:15, fiber_g:5,  tags:['Non-Vegetarian'] },
+    { id:5,  emoji:'🥚', title:'Egg White Protein Scramble',       description:'8-white spicy scramble with onions, tomato, chillies & grains',        calories:430, protein_g:30, carbs_g:34, fat_g:10, fiber_g:4,  tags:['Eggitarian'] },
+    { id:6,  emoji:'🥚', title:'Whole Egg Power Scramble Bowl',    description:'Whole-egg scramble, caramelised onion, tomato & whole grains',         calories:460, protein_g:31, carbs_g:40, fat_g:13, fiber_g:5,  tags:['Eggitarian'] },
+    { id:7,  emoji:'🥚', title:'Triple Egg Omelette Bowl',         description:'Folded omelette with bell peppers & a side of whole grains',           calories:455, protein_g:30, carbs_g:40, fat_g:12, fiber_g:5,  tags:['Eggitarian'] },
+    { id:17, emoji:'🥚', title:'Egg Bhurji Masala Bowl',           description:'Spiced egg bhurji with onions, capsicum, and whole grains',            calories:450, protein_g:30, carbs_g:38, fat_g:12, fiber_g:5,  tags:['Eggitarian'] },
+    { id:18, emoji:'🥚', title:'Egg & Paneer Protein Bowl',        description:'Egg whites and paneer cubes tossed with mild spices and grains',       calories:465, protein_g:31, carbs_g:40, fat_g:14, fiber_g:5,  tags:['Eggitarian'] },
+    { id:19, emoji:'🥚', title:'Spinach Egg Scramble Bowl',        description:'Egg scramble with sautéed spinach and whole grains',                   calories:440, protein_g:30, carbs_g:36, fat_g:11, fiber_g:6,  tags:['Eggitarian'] },
+    { id:8,  emoji:'🥦', title:'Paneer Power Scramble Bowl',       description:'Low-fat paneer scramble, mild spices, whole grains',                   calories:470, protein_g:31, carbs_g:46, fat_g:16, fiber_g:5,  tags:['Vegetarian'] },
+    { id:9,  emoji:'🥦', title:'Lentil Tadka Performance Bowl',    description:'Yellow lentil tadka, mixed vegetables, whole grains — protein boosted', calories:460, protein_g:30, carbs_g:52, fat_g:11, fiber_g:9,  tags:['Vegetarian'] },
+    { id:10, emoji:'🥦', title:'Kidney Bean Recovery Bowl',        description:'Slow-cooked kidney bean curry with whole grains & fresh salad',         calories:480, protein_g:30, carbs_g:58, fat_g:11, fiber_g:10, tags:['Vegetarian'] },
+    { id:11, emoji:'🥦', title:'Moong & Millet Harvest Bowl',      description:'Moong dal & millet medley with seasonal vegetables',                   calories:445, protein_g:30, carbs_g:54, fat_g:10, fiber_g:9,  tags:['Vegetarian'] },
+    { id:12, emoji:'🥦', title:'Chickpea Strength Bowl',           description:'Spiced chickpea curry with whole grains',                              calories:480, protein_g:31, carbs_g:60, fat_g:11, fiber_g:11, tags:['Vegetarian'] },
+    { id:14, emoji:'🥦', title:'Grilled Paneer Tikka Plate',       description:'Grilled paneer tikka with savoury whole grains',                       calories:465, protein_g:32, carbs_g:36, fat_g:17, fiber_g:5,  tags:['Vegetarian'] }
+];
+
+var DIET_PROFILES = ['nonveg','eggitarian','vegetarian'];
+var DIET_TAG_BY_PROFILE = { nonveg:'Non-Vegetarian', eggitarian:'Eggitarian', vegetarian:'Vegetarian' };
+var DIET_LABELS = { nonveg:'Non-Vegetarian Meals Only', eggitarian:'Eggitarian Meals Only', vegetarian:'Vegetarian Meals Only' };
+var activeDiet = 'nonveg';
 
 function renderMeals() {
     var container = document.getElementById('meal-scroll-container');
     if (!container) return;
-    var list = meals[activeDiet];
+    var tag = DIET_TAG_BY_PROFILE[activeDiet];
+    var list = MEALS.filter(function(m){ return m.tags[0] === tag; });
     var html = '';
     list.forEach(function(m) {
-        var tagColor = m.tags[0]==='Chicken' ? 'text-amber-700 bg-amber-50 border-amber-200'
-                     : m.tags[0]==='Egg'     ? 'text-yellow-700 bg-yellow-50 border-yellow-200'
-                     :                         'text-green-800 bg-green-50 border-green-200';
-        var proteinPct = Math.round(m.protein_g / 50 * 100);
+        var tagColor = m.tags[0]==='Non-Vegetarian' ? 'text-amber-700 bg-amber-50 border-amber-200'
+                     : m.tags[0]==='Eggitarian'     ? 'text-yellow-700 bg-yellow-50 border-yellow-200'
+                     :                                'text-green-800 bg-green-50 border-green-200';
+        var proteinPct = Math.round(m.protein_g / 35 * 100);
         html += '<div class="meal-card-h bg-white rounded-xl border border-gray-200 p-5 flex flex-col gap-3 shadow-sm">'
               + '<div class="flex items-start justify-between gap-2">'
               +   '<span class="text-xs font-semibold px-2 py-0.5 rounded border '+tagColor+'">'+m.tags[0]+'</span>'
@@ -1349,11 +1687,16 @@ document.addEventListener('DOMContentLoaded', function(){
     setDiet('nonveg');
     setGoal('Cut');
     updateSlotHint();
+    updateLocationHint();
+    renderLocationSelectors();
+    updateSpecialPreferencesVisibility();
     ['sf-name','sf-mobile'].forEach(function(id){
         var el = document.getElementById(id);
         if (el) el.addEventListener('input', function(){ this.style.borderColor=''; });
     });
 });
 </script>
+
+
 </body>
 </html>
